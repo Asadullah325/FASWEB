@@ -8,6 +8,8 @@ import VerifyEmail from "./auth/VerifyEmail"
 import HeroSection from "./components/custom/HeroSection"
 import Profile from "./components/custom/Profile"
 import SearchPage from "./components/custom/SearchPage"
+import ResturantDetails from "./components/custom/ResturantDetails"
+import Cart from "./components/custom/Cart"
 
 
 const appRouter = createBrowserRouter([
@@ -26,6 +28,14 @@ const appRouter = createBrowserRouter([
       {
         path: "search/:searchText",
         element: <SearchPage/>,
+      },
+      {
+        path:"restaurant/:restaurantId",
+        element: <ResturantDetails/>,
+      },
+      {
+        path: "cart",
+        element: <Cart/>,
       }
     ],
   },

@@ -50,7 +50,7 @@ const SearchPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {
                                 [1, 2, 3, 4, 5, 6].map((item: number) => (
-                                    <Card key={item} className="flex flex-col gap-2 p-0 hover:shadow-2xl transition-shadow duration-300 cursor-pointer">
+                                    <Card key={item} className="flex flex-col gap-2 p-0 hover:shadow-2xl transition-shadow duration-300">
                                         <div className="relative">
                                             <AspectRatio ratio={16 / 9} className="rounded-tl-lg rounded-tr-lg overflow-hidden">
                                                 <img className="w-full h-full object-cover" src={HeroImage} alt="" />
@@ -79,8 +79,8 @@ const SearchPage = () => {
                                                     <span className="text-sm font-bold">Price: $20</span>
                                                 </div>
                                                 <CardFooter className="p-0 border-t border-t-slate-500">
-                                                    <Link to={`/product/${item}`} className="w-full">
-                                                        <Button className="w-full">View Details</Button>
+                                                    <Link to={`/restaurant/${item}`} className="w-full">
+                                                        <Button className="w-full cursor-pointer">View Details</Button>
                                                     </Link>
                                                 </CardFooter>
                                             </div>

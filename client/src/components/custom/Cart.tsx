@@ -53,6 +53,9 @@ const Cart = () => {
                         </TableRow>
                     </TableFooter>
                 </Table>
+                <div className="flex justify-end mt-4">
+                    <Button className="cursor-pointer">Proceed to Checkout</Button>
+                </div>
             </div>
         </>
     )

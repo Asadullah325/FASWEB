@@ -28,7 +28,7 @@ const Navbar = () => {
               Profile
             </Link>
             <Link to="/order/status" className="text-gray-700 font-bold hover:text-gray-900">
-              Order
+             My Orders
             </Link>
             {
               admin && (
@@ -144,7 +144,7 @@ const NavbarMobile = ({ admin }: { admin: boolean }) => {
             </Link>
             <Link to="/order/status" className="text-gray-700 flex items-center gap-2 font-bold hover:text-gray-900">
               <HandPlatter className="h-6 w-6" />
-              Order
+              My Orders
             </Link>
             <Link to="/cart" className="relative flex items-center gap-2 text-gray-700 font-bold hover:text-gray-900">
               <ShoppingCart className="h-6 w-6" />

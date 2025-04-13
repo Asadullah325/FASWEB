@@ -13,6 +13,7 @@ import Cart from "./components/custom/Cart"
 import Resturant from "./admin/Resturant"
 import Menu from "./admin/Menu"
 import Orders from "./admin/Orders"
+import Success from "./components/custom/Success"
 
 
 const appRouter = createBrowserRouter([
@@ -22,35 +23,41 @@ const appRouter = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HeroSection/>,
+        element: <HeroSection />,
       },
       {
         path: "profile",
-        element: <Profile/>,
+        element: <Profile />,
       },
       {
         path: "search/:searchText",
-        element: <SearchPage/>,
+        element: <SearchPage />,
       },
       {
-        path:"restaurant/:restaurantId",
-        element: <ResturantDetails/>,
+        path: "restaurant/:restaurantId",
+        element: <ResturantDetails />,
       },
       {
         path: "cart",
-        element: <Cart/>,
+        element: <Cart />,
       },
       {
+        path: "order/status",
+        element: <Success />,
+      },
+
+      // admin routes
+      {
         path: "admin/resturant",
-        element: <Resturant/>,
+        element: <Resturant />,
       },
       {
         path: "admin/menu",
-        element: <Menu/>,
+        element: <Menu />,
       },
       {
         path: "admin/orders",
-        element: <Orders/>,
+        element: <Orders />,
       }
     ],
   },

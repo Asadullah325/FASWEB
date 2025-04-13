@@ -7,8 +7,8 @@ const Orders = () => {
             <div className="p-2">
                 <div className="flex flex-col gap-4">
                     <h1 className="text-2xl md:text-3xl font-bold">Orders Overview</h1>
-                    <div className="flex flex-col md:flex-row sm:items-center justify-between shadow-lg rounded-md p-4 mt-2">
-                        <div className="flex-1">
+                    <div className="flex flex-col md:flex-row sm:items-center gap-4 justify-between shadow-lg rounded-md p-4 mt-2">
+                        <div className="flex-1 space-y-4 md:space-y-2 flex flex-col">
                             <h1 className="text-lg font-bold">Name</h1>
                             <p className="font-semibold text-sm text-gray-500">
                                 <span>Address: </span>

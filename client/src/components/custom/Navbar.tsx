@@ -15,10 +15,10 @@ const Navbar = () => {
   return (
     <>
       <div className="flex justify-between items-center p-3 shadow-md bg-white">
-        <div className="flex items-center space-x-2">
+        <Link to={"/"} className="flex items-center space-x-2">
           <img src="/Logo.webp" alt="Logo" className="h-10 w-10 rounded-full" />
           <h1 className="text-2xl font-bold">FESWEB</h1>
-        </div>
+        </Link>
         <div className="hidden md:flex space-x-4 items-center pr-10">
           <div className="flex space-x-4 items-center">
             <Link to="/" className="text-gray-700 font-bold hover:text-gray-900">

@@ -4,11 +4,20 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const HeroSection = () => {
 
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState<string>('');
+
+    const handleSearch = () => {
+        if (searchText.trim().length === 0) {
+          toast.error('Please enter What you want to search!');
+          return;
+        }
+        navigate(`/search/${searchText}`);
+      };
 
     return (
         <>
@@ -18,9 +27,14 @@ const HeroSection = () => {
                     <p className="text-lg">Your one-stop solution for all things web development.</p>
                     <p className="text-lg">Join us to explore the latest trends and technologies in web development.</p>
                     <div className="relative mt-4 flex items-center gap-2">
-                        <Input value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="Search Here" className='w-full pl-10' />
+                        <Input
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                            placeholder="Search Here"
+                            className='w-full pl-10' />
                         <Search className="absolute left-2 top-2 text-gray-400" />
-                        <Button onClick={() => navigate(`/search/${searchText}`)} className='cursor-pointer' >Search</Button>
+                        <Button onClick={handleSearch} className='cursor-pointer' >Search</Button>
                     </div>
                 </div>
                 <div>

@@ -34,16 +34,16 @@ const Navbar = () => {
               admin && (
                 <Menubar>
                   <MenubarMenu>
-                    <MenubarTrigger>Dashboard</MenubarTrigger>
+                    <MenubarTrigger className="cursor-pointer">Dashboard</MenubarTrigger>
                     <MenubarContent>
-                      <Link to="/admin/resturant" className="text-gray-700 font-bold hover:text-gray-900">
-                        <MenubarItem>Resturant</MenubarItem>
+                      <Link to="/admin/resturant" className="text-gray-700 font-bold cursor-pointer hover:text-gray-900">
+                        <MenubarItem className="cursor-pointer">Resturant</MenubarItem>
                       </Link>
-                      <Link to="/admin/menu" className="text-gray-700 font-bold hover:text-gray-900">
-                        <MenubarItem>Menu</MenubarItem>
+                      <Link to="/admin/menu" className="text-gray-700 cursor-pointer font-bold hover:text-gray-900">
+                        <MenubarItem className="cursor-pointer">Menu</MenubarItem>
                       </Link>
-                      <Link to="/admin/orders" className="text-gray-700 font-bold hover:text-gray-900">
-                        <MenubarItem> Resturant Orders</MenubarItem>
+                      <Link to="/admin/orders" className="text-gray-700 font-bold cursor-pointer hover:text-gray-900">
+                        <MenubarItem className="cursor-pointer"> Resturant Orders</MenubarItem>
                       </Link>
                     </MenubarContent>
                   </MenubarMenu>

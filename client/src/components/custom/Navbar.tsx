@@ -9,7 +9,7 @@ import { Separator } from "../ui/separator"
 
 const Navbar = () => {
 
-  const admin = false;
+  const admin = true; // This should be replaced with actual admin check logic
   const loading = false;
 
   return (
@@ -43,7 +43,7 @@ const Navbar = () => {
                         <MenubarItem>Menu</MenubarItem>
                       </Link>
                       <Link to="/admin/orders" className="text-gray-700 font-bold hover:text-gray-900">
-                        <MenubarItem>Orders</MenubarItem>
+                        <MenubarItem> Resturant Orders</MenubarItem>
                       </Link>
                     </MenubarContent>
                   </MenubarMenu>
@@ -158,9 +158,9 @@ const NavbarMobile = ({ admin }: { admin: boolean }) => {
                     <SquareMenu className="h-6 w-6" />
                     Menu
                   </Link>
-                  <Link to="/admin/resturants" className="text-gray-700 flex items-center gap-2 font-bold hover:text-gray-900">
+                  <Link to="/admin/resturant" className="text-gray-700 flex items-center gap-2 font-bold hover:text-gray-900">
                     <UtensilsCrossed className="h-6 w-6" />
-                    Resturants
+                    Resturant
                   </Link>
                   <Link to="/admin/orders" className="text-gray-700 flex items-center gap-2 font-bold hover:text-gray-900">
                     <PackageCheck className="h-6 w-6" />

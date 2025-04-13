@@ -3,8 +3,15 @@ import { Avatar, AvatarFallback } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "../ui/table"
 import Image from "@/assets/images.jpeg"
+import CheckOutPopUp from "./CheckOutPopUp"
+import { useState } from "react"
 
 const Cart = () => {
+
+    const [open , setOpen] = useState<boolean>(false)
+
+   
+
     return (
         <>
             <div className="flex flex-col max-w-7xl mx-auto px-4 py-8">
@@ -20,7 +27,7 @@ const Cart = () => {
                             <TableHead>Price</TableHead>
                             <TableHead>Quantity</TableHead>
                             <TableHead>Total</TableHead>
-                            <TableHead>Actions</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -41,8 +48,8 @@ const Cart = () => {
                                 </div>
                             </TableCell>
                             <TableCell>$10.00</TableCell>
-                            <TableCell>
-                                <Button variant={"destructive"} size={"sm"} className="cursor-pointe">Remove</Button>
+                            <TableCell className="text-right">
+                                <Button variant={"destructive"} size={"sm"} className="cursor-pointer">Remove</Button>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -54,8 +61,9 @@ const Cart = () => {
                     </TableFooter>
                 </Table>
                 <div className="flex justify-end mt-4">
-                    <Button className="cursor-pointer">Proceed to Checkout</Button>
+                    <Button onClick={() => setOpen(true)} className="cursor-pointer">Proceed to Checkout</Button>
                 </div>
+                <CheckOutPopUp open={open} setOpen={setOpen}/>
             </div>
         </>
     )

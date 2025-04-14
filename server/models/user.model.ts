@@ -13,9 +13,9 @@ export interface IUser {
   lastLogin: Date;
   isVerified: boolean;
   verificationToken: string;
-  verificationTokenExpiry: Date;
+  verificationTokenExpiry: Date | null;
   resetPasswordToken: string;
-  resetPasswordTokenExpiry: Date;
+  resetPasswordTokenExpiry: Date | null;
 }
 
 export interface IUserModel extends IUser, Document {

@@ -26,6 +26,7 @@ export interface IOrder extends mongoose.Document {
 }
 
 export interface IOrderModel extends IOrder, mongoose.Document {
+  _id: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,7 +52,7 @@ const orderSchema = new mongoose.Schema(
         image: { type: String, required: true },
       },
     ],
-    delevieryDetais: {
+    delevieryDetails: {
       address: { type: String, required: true },
       city: { type: String, required: true },
       country: { type: String, required: true },

@@ -5,6 +5,7 @@ import connectDb from "./utils/db";
 import userRoutes from "./routes/user.routes";
 import resturantRoutes from "./routes/resturant.routes";
 import menuRoutes from "./routes/menu.routes";
+import orderRoutes from "./routes/order.routes";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 
@@ -29,6 +30,7 @@ app.use(express.static("public"));
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/resturant", resturantRoutes);
 app.use("/api/v1/menu", menuRoutes);
+app.use("/api/v1/order", orderRoutes);
 
 const port = process.env.PORT || 5000;
 

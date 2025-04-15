@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDb from "./utils/db";
 import userRoutes from "./routes/user.routes";
+import resturantRoutes from "./routes/resturant.routes";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 
@@ -25,6 +26,7 @@ app.use(cors(corsOptions));
 app.use(express.static("public"));
 
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/resturant", resturantRoutes);
 
 const port = process.env.PORT || 5000;
 

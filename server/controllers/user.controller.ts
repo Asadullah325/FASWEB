@@ -5,6 +5,7 @@ import crypto from "crypto";
 import cloudinary from "../utils/cloudinary";
 import { generateAccessToken } from "../utils/generateToken";
 import { generateVerificationCode } from "../utils/generateVerificationCode";
+import { sendResetEmail, sendResetPasswordEmail, sendVerificationEmail, sendWelcomeEmail } from "../utils/email";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -33,7 +34,7 @@ export const signup = async (req: Request, res: Response) => {
     });
 
     generateAccessToken(res, user);
-    // await sendVerificationEmail(email, verificationToken);
+    await sendVerificationEmail(email, verificationToken);
 
     const userWithoutPassword = await User.findById(user._id).select(
       "-password"
@@ -115,7 +116,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
     user.verificationTokenExpiry = null;
     await user.save();
 
-    // await sendWelcomeEmail(user.email, user.name);
+    await sendWelcomeEmail(user.email, user.name);
 
     res.status(200).json({
       success: true,
@@ -164,7 +165,7 @@ export const forgetPassword = async (req: Request, res: Response) => {
 
     await user.save();
 
-    //await sendResetPasswordEmail(user.email, `${process.env.FRONTEND_URL}/reset-password/${resetToken}`);
+    await sendResetPasswordEmail(user.email, `${process.env.FRONTEND_URL}/reset-password/${resetToken}`);
     res.status(200).json({
       success: true,
       message: "Reset password email sent successfully",
@@ -201,7 +202,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     user.resetPasswordTokenExpiry = null;
     await user.save();
 
-    // await sendResetEmail(user.email, user.name);
+    await sendResetEmail(user.email, user.name);
 
     res.status(200).json({
       success: true,

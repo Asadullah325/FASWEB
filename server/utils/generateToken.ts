@@ -1,21 +1,15 @@
-import { Response } from "express";
 import jwt from "jsonwebtoken";
+import { IUserModel } from "../models/user.model";
+import { Response } from "express";
 
-export const generateAccessToken = (res: Response, user: any) => {
-  const token = jwt.sign(
-    {
-      id: user._id,
-      email: user.email,
-    },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: "1h",
-    }
-  );
-  res.cookie("accessToken", token, {
+export const generateAccessToken = (res: Response, user: IUserModel) => {
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
+    expiresIn: "1d",
+  });
+  res.cookie("token", token, {
     httpOnly: true,
     sameSite: "strict",
-    maxAge: 3600000, // 1 hour
+    maxAge: 24 * 60 * 60 * 1000,
   });
   return token;
 };

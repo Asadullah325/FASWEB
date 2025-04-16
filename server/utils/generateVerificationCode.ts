@@ -1,6 +1,5 @@
 export const generateVerificationCode = (length: number): string => {
-  const characters =
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const characters = "0123456789";
   let verificationCode = "";
   const codeLength = characters.length;
 

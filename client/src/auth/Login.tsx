@@ -6,16 +6,16 @@ import { Eye, EyeOff, Loader, Mail } from "lucide-react"
 import { Link } from "react-router-dom"
 import { ChangeEvent, FormEvent, useState } from "react"
 import { UserLogin, userLoginSchema } from "@/schemas/userSchema"
+import { useUserStore } from "@/store/useUserStore"
 
 const Login = () => {
 
-    const [loading, setLoading] = useState(false)
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [data, setData] = useState<UserLogin>({
         email: "",
         password: ""
     })
-
+    const { login, loading } = useUserStore()
     const [errors, setErrors] = useState<Partial<UserLogin>>({})
 
     const hadlepasswrdVisible = () => {
@@ -29,23 +29,16 @@ const Login = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        setLoading(true)
-        // Perform login logic here
+
         const result = userLoginSchema.safeParse(data)
         if (!result.success) {
             const fieldError = result.error.formErrors.fieldErrors;
             setErrors(fieldError as Partial<UserLogin>)
-            setLoading(false)
             return
         }
-        // After login, you can redirect the user or show a success message
-        console.log(data)
-        setLoading(false)
+
+        await login(data)
         setErrors({})
-        setData({
-            email: "",
-            password: "",
-        })
     }
 
     return (
@@ -101,7 +94,7 @@ const Login = () => {
                             )
                         }
                     </div>
-                    <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center justify-between my-2">
                         <Link to="/forgot-password" className="text-sm text-emerald-500 hover:text-emerald-700 font-bold">Forgot Password?</Link>
                     </div>
                     <div className="flex items-center justify-end">
@@ -112,7 +105,10 @@ const Login = () => {
                                     Please Wait...
                                 </Button>
                             ) : (
-                                <Button className="w-full md:w-1/2 bg-emerald-500 hover:bg-emerald-700 text-white cursor-pointer font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onClick={handleSubmit}>
+                                <Button className="w-full md:w-1/2 bg-emerald-500 hover:bg-emerald-700 text-white cursor-pointer font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    type="button"
+                                    onClick={handleSubmit}
+                                >
                                     Login
                                 </Button>
                             )

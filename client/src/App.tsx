@@ -14,12 +14,18 @@ import Resturant from "./admin/Resturant"
 import Menu from "./admin/Menu"
 import Orders from "./admin/Orders"
 import Success from "./components/custom/Success"
+import ProtectedRoutes from "./lib/ProtectedRoutes"
+import AuthenticatedUser from "./lib/AuthenticatedUser"
+import AuthenticateAdmin from "./lib/AuthenticateAdmin"
+import { useUserStore } from "./store/useUserStore"
+import { useEffect } from "react"
+import Loading from "./components/custom/Loading"
 
 
 const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: <ProtectedRoutes> <MainLayout /></ProtectedRoutes>,
     children: [
       {
         path: "/",
@@ -49,29 +55,29 @@ const appRouter = createBrowserRouter([
       // admin routes
       {
         path: "admin/resturant",
-        element: <Resturant />,
+        element: <AuthenticateAdmin><Resturant /></AuthenticateAdmin>,
       },
       {
         path: "admin/menu",
-        element: <Menu />,
+        element: <AuthenticateAdmin> <Menu /></AuthenticateAdmin>,
       },
       {
         path: "admin/orders",
-        element: <Orders />,
+        element: <AuthenticateAdmin><Orders /></AuthenticateAdmin>,
       }
     ],
   },
   {
     path: "login",
-    element: <Login />,
+    element: <AuthenticatedUser><Login /></AuthenticatedUser>,
   },
   {
     path: "signup",
-    element: <SignUp />,
+    element: <AuthenticatedUser><SignUp /></AuthenticatedUser>,
   },
   {
     path: "forgot-password",
-    element: <ForgotPassword />,
+    element: <AuthenticatedUser><ForgotPassword /></AuthenticatedUser>,
   },
   {
     path: "reset-password",
@@ -84,6 +90,14 @@ const appRouter = createBrowserRouter([
 ])
 
 const App = () => {
+  const { checkAuthentication, isCheckingAuth } = useUserStore()
+
+  useEffect(() => {
+    checkAuthentication()
+  }, [checkAuthentication])
+
+  if (isCheckingAuth) return <Loading />
+
   return (
     <>
       <RouterProvider router={appRouter} />

@@ -5,7 +5,12 @@ import crypto from "crypto";
 import cloudinary from "../utils/cloudinary";
 import { generateAccessToken } from "../utils/generateToken";
 import { generateVerificationCode } from "../utils/generateVerificationCode";
-import { sendResetEmail, sendResetPasswordEmail, sendVerificationEmail, sendWelcomeEmail } from "../utils/email";
+import {
+  sendResetEmail,
+  sendResetPasswordEmail,
+  sendVerificationEmail,
+  sendWelcomeEmail,
+} from "../utils/email";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -33,7 +38,7 @@ export const signup = async (req: Request, res: Response) => {
       verificationTokenExpiry: Date.now() + 24 * 60 * 60 * 1000, // 1 day
     });
 
-    generateAccessToken(res, user);
+    const token = generateAccessToken(res, user);
     await sendVerificationEmail(email, verificationToken);
 
     const userWithoutPassword = await User.findById(user._id).select(
@@ -44,6 +49,7 @@ export const signup = async (req: Request, res: Response) => {
       success: true,
       message: "User created successfully",
       user: userWithoutPassword,
+      token,
     });
   } catch (error) {
     console.error(error);
@@ -74,7 +80,7 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    generateAccessToken(res, user);
+    const token = generateAccessToken(res, user);
     user.lastLogin = new Date();
     await user.save();
 
@@ -85,6 +91,7 @@ export const login = async (req: Request, res: Response) => {
       success: true,
       message: `Welcome Back ${user.name}`,
       user: userWithoutPassword,
+      token,
     });
   } catch (error) {
     console.error(error);
@@ -165,7 +172,10 @@ export const forgetPassword = async (req: Request, res: Response) => {
 
     await user.save();
 
-    await sendResetPasswordEmail(user.email, `${process.env.FRONTEND_URL}/reset-password/${resetToken}`);
+    await sendResetPasswordEmail(
+      user.email,
+      `${process.env.FRONTEND_URL}/reset-password/${resetToken}`
+    );
     res.status(200).json({
       success: true,
       message: "Reset password email sent successfully",
@@ -220,7 +230,6 @@ export const resetPassword = async (req: Request, res: Response) => {
 export const checkAuth = async (req: Request, res: Response) => {
   try {
     const userId = req.id;
-
     const user = await User.findById(userId).select("-password");
     if (!user) {
       return res.status(404).json({
@@ -228,17 +237,13 @@ export const checkAuth = async (req: Request, res: Response) => {
         message: "User not found",
       });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "User found",
       user,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 

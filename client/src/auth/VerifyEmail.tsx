@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useUserStore } from "@/store/useUserStore";
 import { Loader } from "lucide-react";
 import {
     FormEvent,
@@ -15,7 +16,7 @@ const VerifyEmail = () => {
     const inputRef = useRef<Array<HTMLInputElement | null>>([]);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const { verifyEmail, loading } = useUserStore()
 
     const handleChange = (value: string, index: number) => {
         if (!/^\d?$/.test(value)) return;
@@ -39,10 +40,11 @@ const VerifyEmail = () => {
         e.preventDefault();
         const code = data.join("");
         if (code.length < 6) return setError("Please enter the full 6-digit code.");
-        setLoading(true);
         console.log("Submitted Code:", code);
+
+        await verifyEmail(code)
+
         navigate("/");
-        setLoading(false);
         setData(["", "", "", "", "", ""]);
         setError(null);
     };

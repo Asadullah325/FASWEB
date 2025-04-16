@@ -6,18 +6,18 @@ import { Button } from "../ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
 import { Separator } from "../ui/separator"
+import { useUserStore } from "@/store/useUserStore"
 
 const Navbar = () => {
 
-  const admin = true; // This should be replaced with actual admin check logic
-  const loading = false;
+  const { user, loading, logout } = useUserStore()
 
   return (
     <>
       <div className="flex justify-between items-center p-3 shadow-md bg-white">
         <Link to={"/"} className="flex items-center space-x-2">
           <img src="/Logo.webp" alt="Logo" className="h-10 w-10 rounded-full" />
-          <h1 className="text-2xl font-bold">FESWEB</h1>
+          <h1 className="text-2xl font-bold">FESWEB </h1>
         </Link>
         <div className="hidden md:flex space-x-4 items-center pr-10">
           <div className="flex space-x-4 items-center">
@@ -28,10 +28,10 @@ const Navbar = () => {
               Profile
             </Link>
             <Link to="/order/status" className="text-gray-700 font-bold hover:text-gray-900">
-             My Orders
+              My Orders
             </Link>
             {
-              admin && (
+              user?.isAdmin && (
                 <Menubar>
                   <MenubarMenu>
                     <MenubarTrigger className="cursor-pointer">Dashboard</MenubarTrigger>
@@ -85,7 +85,7 @@ const Navbar = () => {
                   Please Wait...
                 </Button>
               ) : (
-                <Button className="font-bold cursor-pointer">
+                <Button onClick={logout} className="font-bold cursor-pointer">
                   Logout
                 </Button>
               )
@@ -94,7 +94,7 @@ const Navbar = () => {
         </div>
         <div className="md:hidden flex items-center pr-4">
           {/* Mobile Navbar */}
-          <NavbarMobile admin={admin} />
+          <NavbarMobile admin={user?.isAdmin || false} />
         </div>
       </div>
     </>
@@ -104,6 +104,7 @@ const Navbar = () => {
 export default Navbar
 
 const NavbarMobile = ({ admin }: { admin: boolean }) => {
+  const { loading, logout } = useUserStore()
 
   return (
     <>
@@ -181,9 +182,18 @@ const NavbarMobile = ({ admin }: { admin: boolean }) => {
               </Avatar>
               <h2 className="ml-2 font-bold">User Name</h2>
             </div>
-            <Button className="font-bold cursor-pointer">
-              Logout
-            </Button>
+            {
+              loading ? (
+                <Button disabled className="w-full md:w-1/2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 text-xs rounded focus:outline-none focus:shadow-outline" type="button">
+                  <Loader2 className="animate-spin" size={20} />
+                  Please Wait...
+                </Button>
+              ) : (
+                <Button onClick={logout} className="font-bold cursor-pointer">
+                  Logout
+                </Button>
+              )
+            }
           </SheetFooter>
         </SheetContent>
       </Sheet>

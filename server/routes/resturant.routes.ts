@@ -23,7 +23,7 @@ router
   );
 
 router
-  .route("/all/:id")
+  .route("/all")
   .get(catchAsync(isAuthenticated), catchAsync(getResturant));
 
 router

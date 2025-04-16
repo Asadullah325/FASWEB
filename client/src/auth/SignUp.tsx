@@ -3,14 +3,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Eye, EyeOff, Loader, Mail, PhoneIcon, User2 } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { ChangeEvent, FormEvent, useState } from "react"
 import { UserSignUp, userSignUpSchema } from "@/schemas/userSchema"
+import { useUserStore } from "@/store/useUserStore"
 
 const SignUp = () => {
 
-  const [loading, setLoading] = useState(false)
   const [passwordVisible, setPasswordVisible] = useState(false)
+
+  const { signup, loading } = useUserStore()
+  const navigate = useNavigate()
 
   const [data, setData] = useState<UserSignUp>({
     email: "",
@@ -32,27 +35,19 @@ const SignUp = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    setLoading(true)
     // Perform login logic here
 
     const result = userSignUpSchema.safeParse(data)
     if (!result.success) {
       const fieldError = result.error.formErrors.fieldErrors;
       setErrors(fieldError as Partial<UserSignUp>)
-      setLoading(false)
       return
     }
 
-    // After login, you can redirect the user or show a success message
-    console.log(data)
-    setLoading(false)
+    await signup(data)
+
+    navigate("/verify-email")
     setErrors({})
-    setData({
-      email: "",
-      password: "",
-      contact: "",
-      name: ""
-    })
   }
 
   return (

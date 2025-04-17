@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { resturantSchema, type Resturant } from "@/schemas/resturantSchema"
+import { useResturantStore } from "@/store/useResturantStore"
 import { Loader2 } from "lucide-react"
-import { ChangeEvent, FormEvent, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 
 const Resturant = () => {
 
@@ -18,8 +19,7 @@ const Resturant = () => {
 
     const [errors, setErrors] = useState<Partial<Resturant>>()
 
-    const loading = false
-    const resturant = false;
+    const { loading, resturant, createResturant, updateResturant, getResturant } = useResturantStore()
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = e.target
@@ -43,8 +43,47 @@ const Resturant = () => {
             setErrors(fieldErrors as Partial<Resturant>)
             return
         }
-        console.log(result)
+
+        try {
+            const formData = new FormData()
+            formData.append("name", data.name);
+            formData.append("city", data.city);
+            formData.append("country", data.country);
+            formData.append("delivaryTime", data.time.toString());
+            formData.append("tags", JSON.stringify(data.tags));
+            if (data.image) {
+                formData.append("image", data.image);
+            }
+
+            if (resturant) {
+                await updateResturant(formData)
+            } else {
+                await createResturant(formData)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+
     }
+
+    useEffect(() => {
+        const fetchRestaurant = async () => {
+            await getResturant();
+            if (resturant) {
+                setData({
+                    name: resturant.name || "",
+                    city: resturant.city || "",
+                    country: resturant.country || "",
+                    time: resturant.delivaryTime || 0,
+                    tags: resturant.tags
+                        ? resturant.tags.map((tag: string) => tag)
+                        : [],
+                    image: undefined,
+                });
+            };
+        }
+        fetchRestaurant();
+    })
 
     return (
         <>
@@ -52,7 +91,7 @@ const Resturant = () => {
                 <div className="p-2">
                     <div className="flex flex-col gap-4">
                         <h1 className="text-2xl md:text-3xl font-bold">Resturant</h1>
-                        <form onSubmit={handleSubmit} className="md:grid md:grid-cols-2 space-y-2 md:space-y-0 gap-4">
+                        <form onSubmit={handleSubmit} className="md:grid md:grid-cols-2 space-y-2 md:space-y-0 gap-4" >
                             <div className="flex flex-col gap-2">
                                 <Label htmlFor="name" className="text-sm font-semibold">Name</Label>
                                 <Input

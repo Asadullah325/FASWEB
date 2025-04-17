@@ -21,13 +21,11 @@ router
     upload.single("image"),
     catchAsync(createResturant)
   );
+  
+router.route("/all").get(catchAsync(isAuthenticated), catchAsync(getResturant));
 
 router
-  .route("/all")
-  .get(catchAsync(isAuthenticated), catchAsync(getResturant));
-
-router
-  .route("/update/:id")
+  .route("/update")
   .put(
     catchAsync(isAuthenticated),
     upload.single("image"),
@@ -43,7 +41,7 @@ router
   .get(catchAsync(isAuthenticated), catchAsync(updateOrderStatus));
 
 router
-  .route("/search/:searchTrm")
+  .route("/search/:searchTerm")
   .get(catchAsync(isAuthenticated), catchAsync(SearchResturant));
 
 router

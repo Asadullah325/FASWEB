@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 export interface IRestaurant {
   userId: mongoose.Schema.Types.ObjectId;
   resturantName: string;
-  address: string;
   city: string;
   country: string;
   delivaryTime: number;
@@ -20,7 +19,6 @@ export interface IRestaurantModel extends IRestaurant, mongoose.Document {
 const resturantSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    address: { type: String, required: true },
     city: { type: String, required: true },
     country: { type: String, required: true },
     delivaryTime: { type: Number, required: true },

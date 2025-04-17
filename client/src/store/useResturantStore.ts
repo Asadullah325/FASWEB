@@ -11,37 +11,80 @@ export const useResturantStore = create<any>()(
     (set) => ({
       loading: false,
       resturant: null,
-      createResturant: async (data: any) => {
+      searchedResturant: null,
+
+      createResturant: async (formData: any) => {
         try {
           set({ loading: true });
-          const response = await axios.post(`${API_END_POINT}/create`, data, {
-            headers: { "Content-Type": "application/json" },
-          });
-          if (response?.data?.success) {
-            toast.success(response.data.message);
-            set({
-              loading: false,
-            });
+          const { data } = await axios.post(
+            `${API_END_POINT}/create`,
+            formData
+          );
+          if (data?.success) {
+            toast.success(data.message);
+            set({ loading: false });
           }
-        } catch (error) {
+        } catch (error: unknown) {
           set({ loading: false });
           const err = error as { response?: { data?: { message?: string } } };
           toast.error(err.response?.data?.message || "Something went wrong");
         }
       },
+
       getResturant: async () => {
         try {
           set({ loading: true });
-          const response = await axios.get(`${API_END_POINT}/all`);
-          if (response?.data?.success) {
-            toast.success(response.data.message);
-            set({
-              loading: false,
-              resturant: response.data.newResturant,
-            });
+          const { data } = await axios.get(`${API_END_POINT}/all`);
+          if (data?.success) {
+            toast.success(data.message);
+            set({ resturant: data.resturant });
+            set({ loading: false });
           }
-        } catch (error) {
-          set({ loading: false, resturant: null });
+        } catch (error: unknown) {
+          set({ loading: false });
+          const err = error as { response?: { data?: { message?: string } } };
+          toast.error(err.response?.data?.message || "Something went wrong");
+        }
+      },
+
+      updateResturant: async (formData: any) => {
+        try {
+          set({ loading: true });
+          const { data } = await axios.put(`${API_END_POINT}/update`, formData);
+          if (data?.success) {
+            toast.success(data.message);
+            set({ loading: false });
+          }
+        } catch (error: unknown) {
+          set({ loading: false });
+          const err = error as { response?: { data?: { message?: string } } };
+          toast.error(err.response?.data?.message || "Something went wrong");
+        }
+      },
+
+      searchResturant: async (
+        searchTerm: string,
+        searchQuery: string,
+        selectedTags: string
+      ) => {
+        try {
+          set({ loading: true });
+          const params = new URLSearchParams({
+            searchQuery,
+            selectedTags,
+          });
+
+          const { data } = await axios.get(
+            `${API_END_POINT}/search/${searchTerm}?${params.toString()}`
+          );
+
+          if (data?.success) {
+            toast.success(data.message);
+            set({ searchedResturant: data.resturants });
+            set({ loading: false });
+          }
+        } catch (error: unknown) {
+          set({ loading: false });
           const err = error as { response?: { data?: { message?: string } } };
           toast.error(err.response?.data?.message || "Something went wrong");
         }

@@ -75,7 +75,7 @@ const Navbar = () => {
               <Button size={"icon"} className="absolute -top-2 -right-2 w-4 h-4 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-full">5</Button>
             </Link>
             <Avatar>
-              <AvatarImage className="cursor-pointer" src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740" />
+              <AvatarImage className="cursor-pointer" src={user?.profilePicture || ""} />
               <AvatarFallback className="cursor-pointer">CN</AvatarFallback>
             </Avatar>
             {

@@ -5,7 +5,15 @@ import Order from "../models/order.model";
 
 export const createResturant = async (req: Request, res: Response) => {
   try {
-    const { name, address, city, country, delivaryTime, tags } = req.body;
+    const { name, city, country, delivaryTime, tags } = req.body;
+
+    // Validate required fields
+    if (!name || !city || !country || !delivaryTime || !tags) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
 
     const userId = req.id;
     const resturant = await Restaurant.findOne({ userId });
@@ -23,7 +31,6 @@ export const createResturant = async (req: Request, res: Response) => {
         message: "Image is required",
       });
     }
-
     const imageURL = await uploadImageToCloudinary(file as Express.Multer.File);
 
     if (!imageURL) {
@@ -33,14 +40,16 @@ export const createResturant = async (req: Request, res: Response) => {
       });
     }
 
+    // Handle tags safely
+    const parsedTags = typeof tags === "string" ? JSON.parse(tags) : tags;
+
     const newResturant = await Restaurant.create({
       name,
-      address,
       city,
       country,
       delivaryTime,
-      tags: JSON.parse(tags),
-      imageURL,
+      tags: parsedTags,
+      image: imageURL,
       userId,
     });
 
@@ -61,7 +70,7 @@ export const createResturant = async (req: Request, res: Response) => {
 export const getResturant = async (req: Request, res: Response) => {
   try {
     const userId = req.id;
-    const resturant = await Restaurant.findOne({ userId });
+    const resturant = await Restaurant.findOne({ userId }).populate("menus");
     if (!resturant) {
       return res.status(404).json({
         success: false,

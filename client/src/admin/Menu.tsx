@@ -5,10 +5,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Plus } from "lucide-react"
-import HeroImage from "@/assets/Hero.avif"
 import EditMenu from "./EditMenu"
 import { ChangeEvent, FormEvent, useState } from "react"
 import { menuSchema, type Menu } from "@/schemas/menuSchema"
+import { useMenuStore } from "@/store/useMenuStore"
+import { useResturantStore } from "@/store/useResturantStore"
 
 const Menu = () => {
 
@@ -21,25 +22,12 @@ const Menu = () => {
 
   const [selectedMenu, setSelectedMenu] = useState<Menu>()
   const [editOpen, setEditOpen] = useState<boolean>(false)
-  const loading = false
+  const [open, setOpen] = useState<boolean>(false)
   const [error, setError] = useState<Partial<Menu>>({})
 
-  const Menus = [
-    {
-      id: 1,
-      name: "Menu 1",
-      description: "Description for Menu 1",
-      price: 10.99,
-      image: { src: HeroImage, alt: "Menu 1" }
-    },
-    {
-      id: 2,
-      name: "Menu 2",
-      description: "Description for Menu 2",
-      price: 12.99,
-      image: { src: HeroImage, alt: "Menu 2" }
-    }
-  ]
+  const { createMenu, loading } = useMenuStore()
+  const { resturant } = useResturantStore()
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target
@@ -63,6 +51,22 @@ const Menu = () => {
       return
     }
     console.log(data)
+
+
+    try {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("price", data.price.toString());
+      if (data.image) {
+        formData.append("image", data.image);
+      }
+      await createMenu(formData);
+      setOpen(false)
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   return (
@@ -72,7 +76,7 @@ const Menu = () => {
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl md:text-3xl font-bold">Available Menu</h1>
-              <Dialog>
+              <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-black transition duration-200 cursor-pointer">
                   <Plus className=" h-4 w-4" />
                   Add Menu
@@ -85,7 +89,7 @@ const Menu = () => {
                       You can add a name, description, and price for the menu item.
                     </DialogDescription>
                   </DialogHeader>
-                  <form onSubmit={handleSubmit} className="md:grid md:grid-cols-2 space-y-3 md:space-y-0 gap-4">
+                  <form onSubmit={handleSubmit} className="md:grid md:grid-cols-2 space-y-3 md:space-y-0 gap-4" >
                     <div className="flex flex-col gap-2">
                       <Label htmlFor="name" className="text-sm font-semibold">Name</Label>
                       <Input
@@ -153,11 +157,11 @@ const Menu = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {
-                Menus.map((item: Menu, index: number) => (
+                resturant.menus && resturant.menus.map((item: Menu, index: number) => (
                   <Card key={index} className="flex flex-col gap-2 p-0 hover:shadow-2xl transition-shadow duration-300">
                     <div className="relative">
                       <AspectRatio ratio={16 / 9} className="rounded-tl-lg rounded-tr-lg overflow-hidden">
-                        <img className="w-full h-full object-cover" src={item.image.src} alt={item.image.alt} />
+                        <img className="w-full h-full object-cover" src={item.image} alt={item.name} />
                       </AspectRatio>
                       <span className="absolute top-2 left-2 bg-red-500 font-bold text-primary-foreground text-xs px-2 py-0.5 rounded">Featured</span>
                     </div>

@@ -15,7 +15,7 @@ router
   );
 router
   .route("/edit/:id")
-  .post(
+  .put(
     catchAsync(isAuthenticated),
     upload.single("image"),
     catchAsync(editMenu)

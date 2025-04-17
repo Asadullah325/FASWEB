@@ -1,3 +1,4 @@
+import { MenuItem, RestaurantState } from "@/types/resturantTypes";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { create } from "zustand";
@@ -6,22 +7,27 @@ import { persist, createJSONStorage } from "zustand/middleware";
 const API_END_POINT = "http://localhost:3000/api/v1/resturant";
 axios.defaults.withCredentials = true;
 
-export const useResturantStore = create<any>()(
+export const useResturantStore = create<RestaurantState>()(
   persist(
     (set) => ({
       loading: false,
       resturant: null,
       searchedResturant: null,
-
-      createResturant: async (formData: any) => {
+      appliedFilter: [],
+      createResturant: async (formData: FormData) => {
         try {
           set({ loading: true });
-          const { data } = await axios.post(
+          const response = await axios.post(
             `${API_END_POINT}/create`,
-            formData
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
           );
-          if (data?.success) {
-            toast.success(data.message);
+          if (response.data.success) {
+            toast.success(response.data.message);
             set({ loading: false });
           }
         } catch (error: unknown) {
@@ -33,27 +39,32 @@ export const useResturantStore = create<any>()(
 
       getResturant: async () => {
         try {
-          set({ loading: true });
-          const { data } = await axios.get(`${API_END_POINT}/all`);
-          if (data?.success) {
-            toast.success(data.message);
-            set({ resturant: data.resturant });
-            set({ loading: false });
+          const response = await axios.get(`${API_END_POINT}/all`);
+          if (response.data.success) {
+            set({ resturant: response.data.resturant });
           }
         } catch (error: unknown) {
           set({ loading: false });
           const err = error as { response?: { data?: { message?: string } } };
-          toast.error(err.response?.data?.message || "Something went wrong");
+          console.log(err.response?.data?.message || "Something went wrong");
         }
       },
 
-      updateResturant: async (formData: any) => {
+      updateResturant: async (formData: FormData) => {
         try {
           set({ loading: true });
-          const { data } = await axios.put(`${API_END_POINT}/update`, formData);
-          if (data?.success) {
-            toast.success(data.message);
-            set({ loading: false });
+          const response = await axios.put(
+            `${API_END_POINT}/update`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+          if (response.data.success) {
+            toast.success(response.data.message);
+            set({ loading: false, resturant: response.data.resturant });
           }
         } catch (error: unknown) {
           set({ loading: false });
@@ -63,32 +74,69 @@ export const useResturantStore = create<any>()(
       },
 
       searchResturant: async (
-        searchTerm: string,
+        searchText: string,
         searchQuery: string,
-        selectedTags: string
+        selectedTags: string[]
       ) => {
         try {
           set({ loading: true });
-          const params = new URLSearchParams({
-            searchQuery,
-            selectedTags,
-          });
 
-          const { data } = await axios.get(
-            `${API_END_POINT}/search/${searchTerm}?${params.toString()}`
+          const params = new URLSearchParams();
+          params.set("searchQuery", searchQuery);
+          params.set("selectedTags", selectedTags.join(","));
+
+          // await new Promise((resolve) => setTimeout(resolve, 2000));
+          const response = await axios.get(
+            `${API_END_POINT}/search/${searchText}?${params.toString()}`
           );
-
-          if (data?.success) {
-            toast.success(data.message);
-            set({ searchedResturant: data.resturants });
-            set({ loading: false });
+          if (response.data.success) {
+            set({ loading: false, searchedResturant: response.data });
           }
         } catch (error: unknown) {
-          set({ loading: false });
+          set({ loading: false, searchedResturant: null });
           const err = error as { response?: { data?: { message?: string } } };
           toast.error(err.response?.data?.message || "Something went wrong");
         }
       },
+
+      addMenuToResturant: (menu: MenuItem) => {
+        set((state: RestaurantState) => ({
+          resturant: state.resturant
+            ? { ...state.resturant, menus: [...state.resturant.menus, menu] }
+            : null,
+        }));
+      },
+
+      updateMenuToResturant: (updatedMenu: MenuItem) => {
+        set((state: RestaurantState) => {
+          if (state.resturant) {
+            const updatedMenuList = state.resturant.menus.map(
+              (menu: MenuItem) =>
+                menu._id === updatedMenu._id ? updatedMenu : menu
+            );
+            return {
+              resturant: {
+                ...state.resturant,
+                menus: updatedMenuList,
+              },
+            };
+          }
+          return state;
+        });
+      },
+
+      setAppliedFilter: (value: string) => {
+        set((state: RestaurantState) => {
+          const isAlreadyApplied = state.appliedFilter.includes(value);
+          const updatedFilter = isAlreadyApplied
+            ? state.appliedFilter.filter((item: string) => item !== value)
+            : [...state.appliedFilter, value];
+          return { appliedFilter: updatedFilter };
+        });
+      },
+      resetAppliedFilter: () => {
+        set({ appliedFilter: [] })
+    },
     }),
     {
       name: "resturant",

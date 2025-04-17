@@ -213,46 +213,37 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 };
 export const SearchResturant = async (req: Request, res: Response) => {
   try {
-    const { searchTerm } = req.params;
-    const { searchQuery, selectedTags } = req.query;
-
-    // Parse tags if they exist
-    const tags =
-      typeof selectedTags === "string"
-        ? selectedTags.split(",").filter((tag) => tag.trim() !== "")
-        : [];
-
+    const searchText = req.params.searchText || "";
+    const searchQuery = (req.query.searchQuery as string) || "";
+    const selectedTags = ((req.query.selectedTags as string) || "")
+      .split(",")
+      .filter((tag) => tag);
     const query: any = {};
-    if (searchTerm) {
+
+    if (searchText) {
       query.$or = [
-        { name: { $regex: searchTerm, $options: "i" } },
-        { address: { $regex: searchTerm, $options: "i" } },
-        { city: { $regex: searchTerm, $options: "i" } },
-        { country: { $regex: searchTerm, $options: "i" } },
-        { delivaryTime: { $regex: searchTerm, $options: "i" } },
+        { restaurantName: { $regex: searchText, $options: "i" } },
+        { city: { $regex: searchText, $options: "i" } },
+        { country: { $regex: searchText, $options: "i" } },
       ];
     }
+    // filter on the basis of searchQuery
     if (searchQuery) {
       query.$or = [
-        { name: { $regex: searchQuery, $options: "i" } },
+        { restaurantName: { $regex: searchQuery, $options: "i" } },
         { tags: { $regex: searchQuery, $options: "i" } },
       ];
     }
-
-    if (tags.length > 0) {
-      query.tags = { $in: tags };
+    // console.log(query);
+    // ["momos", "burger"]
+    if (selectedTags.length > 0) {
+      query.tags = { $in: selectedTags };
     }
 
-    const resturants = await Restaurant.find(query).populate("userId");
-    if (resturants.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No restaurants found",
-      });
-    }
+    const restaurants = await Restaurant.find(query);
     return res.status(200).json({
       success: true,
-      resturants,
+      data: restaurants,
     });
   } catch (error) {
     console.error(error);

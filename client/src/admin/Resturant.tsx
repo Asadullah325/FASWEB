@@ -64,6 +64,8 @@ const Resturant = () => {
             console.log(error);
         }
 
+        setErrors({})
+
     }
 
     useEffect(() => {
@@ -80,10 +82,10 @@ const Resturant = () => {
                         : [],
                     image: undefined,
                 });
-            };
+            }
         }
         fetchRestaurant();
-    })
+    },[resturant, getResturant])
 
     return (
         <>

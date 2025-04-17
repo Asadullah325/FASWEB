@@ -1,18 +1,37 @@
-import { Link, useParams } from "react-router-dom"
-import FilterPage from "./FilterPage"
-import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import FilterPage from "./FilterPage";
+import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { MapPin, X } from "lucide-react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { AspectRatio } from "../ui/aspect-ratio";
-import HeroImage from "@/assets/Hero.avif"
 import { Skeleton } from "../ui/skeleton";
+import { useResturantStore } from "@/store/useResturantStore";
+import { Resturant } from "@/types/resturantTypes";
 
 const SearchPage = () => {
-    const { searchText } = useParams();
-    const [searchQuery, setSearchQuary] = useState<string>('');
+    const params = useParams();
+    const [searchQuery, setSearchQuery] = useState<string>("");
+
+    const {
+        loading,
+        searchResturant,
+        appliedFilter,
+        searchedResturant
+    } = useResturantStore();
+
+    useEffect(() => {
+        searchResturant(params.searchText!, searchQuery, appliedFilter);
+
+    }, [params.searchText, appliedFilter, searchQuery, searchResturant]);
+
+    const handleSearch = () => {
+        if (params.searchText) {
+            searchResturant(params.appliedFilter, searchQuery, appliedFilter || []);
+        }
+    };
 
     return (
         <div className="max-w-7xl mx-auto my-6 px-3">
@@ -26,68 +45,81 @@ const SearchPage = () => {
                                 id="search"
                                 type="text"
                                 name="search"
-                                onChange={(e) => setSearchQuary(e.target.value)}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search Here"
-                                className='w-full'
+                                className="w-full"
                             />
-                            <Button className="cursor-pointer">Search</Button>
+                            <Button className="cursor-pointer" onClick={handleSearch}>
+                                Search
+                            </Button>
                         </div>
                     </div>
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-2">
-                            <h1 className="text-2xl font-bold">(3) Search Results Found</h1>
+                            <h1 className="text-2xl font-bold">
+                                ({searchedResturant?.data?.length || 0}) Search Results Found
+                            </h1>
                             <div className="flex flex-wrap gap-2">
-                                {
-                                    ["Biryani", "Noodles", "Rice"].map((selectedFilter: string, index: number) => (
-                                        <div key={index} className="relative flex items-center max-w-full gap-2">
-                                            <Badge className="px-3 py-1 pr-6 whitespace-nowrap" variant="outline">{selectedFilter}</Badge>
-                                            <X className="absolute right-1 cursor-pointer h-3 w-3" onClick={() => { }} />
-                                        </div>
-                                    ))
-                                }
+                                {appliedFilter?.map((selectedFilter: string, index: number) => (
+                                    <div key={index} className="relative flex items-center max-w-full gap-2">
+                                        <Badge className="px-3 py-1 pr-6 whitespace-nowrap" variant="outline">
+                                            {selectedFilter}
+                                        </Badge>
+                                        <X className="absolute right-1 cursor-pointer h-3 w-3" onClick={() => {
+                                            appliedFilter.splice(index, 1);
+                                            searchResturant(params.searchText!, searchQuery, appliedFilter);
+                                        }} />
+                                    </div>
+                                ))}
                             </div>
                         </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {
-                                [1, 2, 3, 4, 5, 6].map((item: number) => (
-                                    <Card key={item} className="flex flex-col gap-2 p-0 hover:shadow-2xl transition-shadow duration-300">
+                            {loading ? (
+                                [...Array(6)].map((_, i) => <SkeletonCard key={i} />)
+                            ) : searchedResturant?.data?.length !== 0 ? (
+                                searchedResturant?.data.map((item: Resturant) => (
+                                    <Card
+                                        key={item._id}
+                                        className="flex flex-col gap-2 p-0 hover:shadow-2xl transition-shadow duration-300"
+                                    >
                                         <div className="relative">
                                             <AspectRatio ratio={16 / 9} className="rounded-tl-lg rounded-tr-lg overflow-hidden">
-                                                <img className="w-full h-full object-cover" src={HeroImage} alt="" />
+                                                <img className="w-full h-full object-cover" src={item.image} alt={item.name} />
                                             </AspectRatio>
-                                            <span className="absolute top-2 left-2 bg-red-500 font-bold text-primary-foreground text-xs px-2 py-0.5 rounded">Featured</span>
+                                            <span className="absolute top-2 left-2 bg-red-500 font-bold text-primary-foreground text-xs px-2 py-0.5 rounded">
+                                                Featured
+                                            </span>
                                         </div>
                                         <CardContent>
                                             <div className="flex flex-col gap-2 py-2">
-                                                <h2 className="text-lg font-bold">Delicious Biryani</h2>
+                                                <h2 className="text-lg font-bold">{item.name}</h2>
                                                 <div className="flex items-center">
-                                                    <MapPin className="h-4 w-4  inline-block mr-1" />
-                                                    <span className="text-sm font-bold">Location: New York</span>
+                                                    <MapPin className="h-4 w-4 inline-block mr-1" />
+                                                    <span className="text-sm font-bold">Location: {item.country}</span>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {
-                                                        ["Biryani", "Noodles", "Rice"].map((item: string, index: number) => (
-                                                            <div key={index} className="relative flex items-center max-w-full gap-2">
-                                                                <Badge className="px-3 py-1 whitespace-nowrap">
-                                                                    {item}
-                                                                </Badge>
-                                                            </div>
-                                                        ))
-                                                    }
+                                                    {item.tags.map((tag: string, index: number) => (
+                                                        <Badge key={index} className="px-3 py-1 whitespace-nowrap">
+                                                            {tag}
+                                                        </Badge>
+                                                    ))}
                                                 </div>
                                                 <div className="flex items-center">
-                                                    <span className="text-sm font-bold">Price: $20</span>
+                                                    <span className="text-sm font-bold">Delivery Time: {item.delivaryTime}</span>
                                                 </div>
-                                                <CardFooter className="p-0 border-t border-t-slate-500">
-                                                    <Link to={`/restaurant/${item}`} className="w-full">
-                                                        <Button className="w-full cursor-pointer">View Details</Button>
-                                                    </Link>
-                                                </CardFooter>
                                             </div>
                                         </CardContent>
+                                        <CardFooter className="p-0 border-t border-t-slate-500">
+                                            <Link to={`/restaurant/${item._id}`} className="w-full">
+                                                <Button className="w-full cursor-pointer">View Details</Button>
+                                            </Link>
+                                        </CardFooter>
                                     </Card>
                                 ))
-                            }
+                            ) : (
+                                <NoResultFound searchText={params.searchText || ""} />
+                            )}
                         </div>
                     </div>
                 </div>
@@ -126,11 +158,10 @@ const SkeletonCard = () => (
 );
 
 const NoResultFound = ({ searchText }: { searchText: string }) => (
-    <div className="flex flex-col items-center justify-center h-full py-10 text-center">
+    <div className="flex flex-col items-center justify-center h-full py-10 text-center col-span-full">
         <h1 className="text-3xl font-bold">No Results Found</h1>
         <p className="mt-2 text-lg">We couldn't find any results for "{searchText}".</p>
         <p className="mt-2 text-lg">Try searching with different keywords.</p>
         <Link to="/" className="mt-4 text-blue-500 hover:underline">Go back to Home</Link>
     </div>
 );
-

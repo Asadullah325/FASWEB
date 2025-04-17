@@ -24,6 +24,9 @@ const Navbar = () => {
             <Link to="/" className="text-gray-700 font-bold hover:text-gray-900">
               Home
             </Link>
+            <Link to="/search" className="text-gray-700 font-bold hover:text-gray-900">
+              All Resturants
+            </Link>
             <Link to="/profile" className="text-gray-700 font-bold hover:text-gray-900">
               Profile
             </Link>

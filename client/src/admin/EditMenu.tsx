@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { menuSchema, type Menu } from "@/schemas/menuSchema"
+import { useMenuStore } from "@/store/useMenuStore"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { Loader2 } from "lucide-react"
 import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useEffect, useState } from "react"
@@ -24,7 +25,7 @@ const EditMenu = (
     })
 
     const [error, setError] = useState<Partial<Menu>>({})
-    const loading = false
+    const { loading, editMenu } = useMenuStore();
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type } = e.target
@@ -49,6 +50,20 @@ const EditMenu = (
             return
         }
         console.log(data)
+
+        try {
+            const formData = new FormData();
+            formData.append("name", data.name);
+            formData.append("description", data.description);
+            formData.append("price", data.price.toString());
+            if (data.image) {
+                formData.append("image", data.image);
+            }
+            await editMenu(selectedMenu?._id, formData);
+            setEditOpen(false)
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     useEffect(() => {

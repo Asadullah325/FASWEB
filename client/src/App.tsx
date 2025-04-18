@@ -20,6 +20,7 @@ import AuthenticateAdmin from "./lib/AuthenticateAdmin"
 import { useUserStore } from "./store/useUserStore"
 import { useEffect } from "react"
 import Loading from "./components/custom/Loading"
+import { useThemeStore } from "./store/useThemeStore"
 
 
 const appRouter = createBrowserRouter([
@@ -91,9 +92,11 @@ const appRouter = createBrowserRouter([
 
 const App = () => {
   const { checkAuthentication, isCheckingAuth } = useUserStore()
+  const initializeTheme = useThemeStore((state:any) => state.initializeTheme);
 
   useEffect(() => {
     checkAuthentication()
+    initializeTheme()
   }, [checkAuthentication])
 
   if (isCheckingAuth) return <Loading />

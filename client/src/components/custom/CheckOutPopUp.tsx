@@ -4,10 +4,21 @@ import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { useUserStore } from "@/store/useUserStore"
+import { useCartStore } from "@/store/useCartStore"
+import { useResturantStore } from "@/store/useResturantStore"
+import { CheckoutSessionRequest } from "@/types/orderTypes"
+import { toast } from "react-toastify"
+import { useOrderStore } from "@/store/useOrderStore"
+import { Loader2 } from "lucide-react"
 
 const CheckOutPopUp = ({ open, setOpen }: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) => {
 
     const { user } = useUserStore()
+    const { cart } = useCartStore()
+    const { resturant } = useResturantStore()
+
+    const { loading, createCheckoutSession } = useOrderStore()
+
     const [data, setData] = useState({
         name: user?.name || "",
         email: user?.email || "",
@@ -28,7 +39,24 @@ const CheckOutPopUp = ({ open, setOpen }: { open: boolean, setOpen: Dispatch<Set
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         // Handle form submission logic here
-        console.log(data)
+        try {
+            const checkoutData: CheckoutSessionRequest = {
+                cartItems: cart.map((cartItem) => ({
+                    menuId: cartItem._id,
+                    name: cartItem.name,
+                    image: cartItem.image,
+                    price: cartItem.price.toString(),
+                    quantity: cartItem.quantity.toString(),
+                })),
+                delivaryDetails: data,
+                resturantId: resturant?._id as string,
+            };
+            createCheckoutSession(checkoutData);
+        } catch (error: unknown) {
+            console.error("Error creating checkout session:", error);
+            toast.error("Error creating checkout session");
+        }
+
         setOpen(false) // Close the dialog after submission
     }
 
@@ -117,7 +145,16 @@ const CheckOutPopUp = ({ open, setOpen }: { open: boolean, setOpen: Dispatch<Set
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="submit" className="w-full cursor-pointer">Continue to checkout</Button>
+                            {
+                                loading ? (
+                                    <Button type="submit" className="w-full cursor-pointer" disabled>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Processing...
+                                    </Button>
+                                ) : (
+                                    <Button type="submit" className="w-full cursor-pointer">Continue to checkout</Button>
+                                )
+                            }
                         </DialogFooter>
                     </form>
 

@@ -157,7 +157,7 @@ const Menu = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {
-                resturant.menus && resturant.menus.map((item: Menu, index: number) => (
+                resturant?.menus && resturant.menus.map((item: Menu, index: number) => (
                   <Card key={index} className="flex flex-col gap-2 p-0 hover:shadow-2xl transition-shadow duration-300">
                     <div className="relative">
                       <AspectRatio ratio={16 / 9} className="rounded-tl-lg rounded-tr-lg overflow-hidden">

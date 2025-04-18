@@ -52,7 +52,7 @@ const orderSchema = new mongoose.Schema(
         image: { type: String, required: true },
       },
     ],
-    delevieryDetails: {
+    delivaryDetails: {
       address: { type: String, required: true },
       city: { type: String, required: true },
       country: { type: String, required: true },

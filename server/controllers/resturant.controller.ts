@@ -158,7 +158,6 @@ export const getResturantOrders = async (req: Request, res: Response) => {
     const orders = await Order.find({ resturantId: resturant._id })
       .populate("userId")
       .populate("resturantId")
-      .populate("menuId");
 
     if (!orders) {
       return res.status(404).json({

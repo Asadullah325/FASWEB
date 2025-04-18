@@ -1,33 +1,19 @@
-import Image from "@/assets/images.jpeg"
 import { Card, CardContent, CardFooter } from "../ui/card"
 import { AspectRatio } from "../ui/aspect-ratio"
 import { Button } from "../ui/button"
+import { useOrderStore } from "@/store/useOrderStore"
+import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 const Success = () => {
 
-    const orders = [
-        {
-            id: 1,
-            amount: 100,
-            status: 'completed',
-            date: '2023-10-01',
-            image: { src: Image, alt: 'Image' },
-        },
-        {
-            id: 2,
-            amount: 200,
-            status: 'pending',
-            date: '2023-10-02',
-            image: { src: Image, alt: 'Image' },
-        },
-        {
-            id: 3,
-            amount: 300,
-            status: 'failed',
-            date: '2023-10-03',
-            image: { src: Image, alt: 'Image' },
-        }
-    ]
+    const { orders, getOrderDetails } = useOrderStore()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        getOrderDetails()
+    }, [])
+
     if (orders.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh] text-2xl font-bold text-gray-700">
@@ -46,20 +32,20 @@ const Success = () => {
                     <Card key={index} className="flex flex-col gap-2 p-0 pb-3 hover:shadow-2xl transition-shadow duration-300">
                         <div className="relative">
                             <AspectRatio ratio={16 / 9} className="rounded-tl-lg rounded-tr-lg overflow-hidden">
-                                <img className="w-full h-full object-cover" src={order.image.src} alt={order.image.alt} />
+                                <img className="w-full h-full object-cover" src={order?.cartItems[0].image} alt={order.cartItems[0].name} />
                             </AspectRatio>
                         </div>
                         <CardContent>
                             <div className="flex flex-col gap-2 py-2">
-                                <div className="text-lg font-semibold">{`Order ID: ${order.id}`}</div>
-                                <div className={`text-sm font-medium ${order.status === 'completed' ? 'text-green-500' : order.status === 'pending' ? 'text-yellow-500'  : 'text-red-500'}`}>
+                                <div className="text-lg font-semibold">{`Order ID: ${order?._id}`}</div>
+                                <div className={`text-sm font-medium ${order.status === 'completed' ? 'text-green-500' : order.status === 'pending' ? 'text-yellow-500' : 'text-red-500'}`}>
                                     {`Status: ${order.status}`}
                                 </div>
-                                <div className="text-sm">{`Date: ${order.date}`}</div>
-                                <div className="text-sm font-semibold">{`Price: $${order.amount}`}</div>
+                                <div className="text-sm">{`Date: ${order?.createdAt}`}</div>
+                                <div className="text-sm font-semibold">{`Price: $${order?.totalPrice}`}</div>
                             </div>
                             <CardFooter>
-                                <Button className="w-full cursor-pointer">Continue Shoping</Button>
+                                <Button onClick={() => navigate("/")} className="w-full cursor-pointer">Continue Shoping</Button>
                             </CardFooter>
                         </CardContent>
                     </Card>

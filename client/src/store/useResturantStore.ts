@@ -1,3 +1,4 @@
+import { Orders } from "@/types/orderTypes";
 import { MenuItem, RestaurantState } from "@/types/resturantTypes";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -9,12 +10,13 @@ axios.defaults.withCredentials = true;
 
 export const useResturantStore = create<RestaurantState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       loading: false,
       resturant: null,
       searchedResturant: null,
       appliedFilter: [],
       singleResturant: null,
+      resturantOrders: [],
       createResturant: async (formData: FormData) => {
         try {
           set({ loading: true });
@@ -150,6 +152,42 @@ export const useResturantStore = create<RestaurantState>()(
           const response = await axios.get(`${API_END_POINT}/${resturantId}`);
           if (response.data.success) {
             set({ singleResturant: response.data.resturant });
+          }
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { message?: string } } };
+          toast.error(err.response?.data?.message || "Something went wrong");
+        }
+      },
+      getResturantOrders: async () => {
+        try {
+          const response = await axios.get(`${API_END_POINT}/order`);
+          if (response.data.success) {
+            set({ resturantOrders: response.data.orders });
+          }
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { message?: string } } };
+          toast.error(err.response?.data?.message || "Something went wrong");
+        }
+      },
+      updateResturantOrder: async (orderId: string, status: string) => {
+        try {
+          const response = await axios.put(
+            `${API_END_POINT}/order/${orderId}/status`,
+            { status },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (response.data.success) {
+            const updatedOrder = get().resturantOrders.map((order: Orders) => {
+              return order._id === orderId
+                ? { ...order, status: response.data.status }
+                : order;
+            });
+            set({ resturantOrders: updatedOrder });
+            toast.success(response.data.message);
           }
         } catch (error: unknown) {
           const err = error as { response?: { data?: { message?: string } } };

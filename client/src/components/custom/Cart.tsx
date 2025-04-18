@@ -10,7 +10,7 @@ import { CartItem } from "@/types/cartTypes"
 const Cart = () => {
 
     const [open, setOpen] = useState<boolean>(false)
-    const { cart, incrementQuantity, decrementQuantity, removeFromTheCart } = useCartStore()
+    const { cart, incrementQuantity, decrementQuantity, removeFromTheCart, clearCart } = useCartStore()
 
     const totalAmount = cart.reduce((acc, item) => {
         return acc + item.price * item.quantity
@@ -21,7 +21,7 @@ const Cart = () => {
             <div className="flex flex-col max-w-7xl mx-auto px-4 py-8">
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-xl md:text-2xl font-bold">Your Cart</h1>
-                    <Button variant={"link"} className="cursor-pointer">Clear All</Button>
+                    <Button onClick={() => clearCart()} variant={"link"} className="cursor-pointer">Clear All</Button>
                 </div>
                 <Table>
                     <TableHeader>

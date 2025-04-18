@@ -8,11 +8,14 @@ import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetT
 import { Separator } from "../ui/separator"
 import { useUserStore } from "@/store/useUserStore"
 import { useCartStore } from "@/store/useCartStore"
+import { useThemeStore } from "@/store/useThemeStore"
 
 const Navbar = () => {
 
   const { user, loading, logout } = useUserStore()
   const { cart } = useCartStore()
+  const { setTheme } = useThemeStore()
+
 
   return (
     <>
@@ -64,10 +67,10 @@ const Navbar = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem className="cursor-pointer" >
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("light")}>
                   Light
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("dark")}>
                   Dark
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -116,6 +119,7 @@ export default Navbar
 const NavbarMobile = ({ admin }: { admin: boolean }) => {
   const { loading, logout, user } = useUserStore()
   const { cart } = useCartStore()
+  const { setTheme } = useThemeStore()
 
   return (
     <>
@@ -135,10 +139,10 @@ const NavbarMobile = ({ admin }: { admin: boolean }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => setTheme("light")}>
                   Light
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
                   Dark
                 </DropdownMenuItem>
               </DropdownMenuContent>

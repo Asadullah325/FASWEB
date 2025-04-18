@@ -62,7 +62,7 @@ const EditMenu = (
             await editMenu(selectedMenu?._id, formData);
             setEditOpen(false)
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

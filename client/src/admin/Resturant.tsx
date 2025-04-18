@@ -85,7 +85,7 @@ const Resturant = () => {
             }
         }
         fetchRestaurant();
-    },[resturant, getResturant])
+    },[])
 
     return (
         <>

@@ -95,7 +95,7 @@ export const useResturantStore = create<RestaurantState>()(
             set({
               loading: false,
               searchedResturant: { data: response.data.data },
-            });
+            });            
           }
         } catch (error: unknown) {
           set({ loading: false, searchedResturant: null });

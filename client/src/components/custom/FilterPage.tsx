@@ -21,7 +21,6 @@ const FilterPage = () => {
   const filterOptionsHandle = (value: string) => {
     setAppliedFilter(value);
   };
-  console.log(appliedFilter);
 
   return (
     <div className="flex flex-col gap-4 w-full md:w-72 py-4">

@@ -220,13 +220,18 @@ export const SearchResturant = async (req: Request, res: Response) => {
       .split(",")
       .filter((tag) => tag);
 
+    // Debugging logs for clarity
+    console.log("Selected Tags:", selectedTags);
+    console.log("Search Query:", searchQuery);
+    console.log("Search Text:", searchText);
+
     const query: any = {};
     const orConditions: any[] = [];
 
     // Search by name, city, country from searchText
     if (searchText) {
       orConditions.push(
-        { name: { $regex: searchQuery, $options: "i" } },
+        { name: { $regex: searchText, $options: "i" } },
         { city: { $regex: searchText, $options: "i" } },
         { country: { $regex: searchText, $options: "i" } }
       );
@@ -253,6 +258,8 @@ export const SearchResturant = async (req: Request, res: Response) => {
     if (orConditions.length > 0) {
       query.$or = orConditions;
     }
+
+    console.log("Final MongoDB Query:", JSON.stringify(query, null, 2));
 
     // Perform the search using the constructed query
     const restaurants = await Restaurant.find(query);

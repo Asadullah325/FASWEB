@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import User from "../models/user.model";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import cloudinary from "../utils/cloudinary";
 import { generateAccessToken } from "../utils/generateToken";
 import { generateVerificationCode } from "../utils/generateVerificationCode";
 import {
@@ -11,6 +10,7 @@ import {
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "../utils/email";
+import { uploadProfileImage } from "../utils/uploadProfileImage";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -250,55 +250,51 @@ export const checkAuth = async (req: Request, res: Response) => {
 export const updateProfile = async (req: Request, res: Response) => {
   try {
     const userId = req.id;
-    const { name, email, contact, address, country, city, profilePicture } =
-      req.body;
+    const { name, email, phone, city, country, address } = req.body;
+    const file = req.file; // This comes from multer
 
-    let cloudResponse: any;
-
-    try {
-      cloudResponse = await cloudinary.uploader.upload(profilePicture, {
-        folder: "profile_pictures",
-      });
-
-      const updatedData = {
-        name,
-        email,
-        contact,
-        address,
-        country,
-        city,
-        profilePicture: cloudResponse.secure_url,
-      };
-
-      const user = await User.findByIdAndUpdate(userId, updatedData, {
-        new: true,
-      });
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: "User not found",
+    let imageURL = null;
+    
+    // Only process image if file was uploaded
+    if (file) {
+      imageURL = await uploadProfileImage(file);
+      if (!imageURL) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Image upload failed" 
         });
       }
-      const userWithoutPassword = await User.findById(user._id).select(
-        "-password"
-      );
-      res.status(200).json({
-        success: true,
-        message: "Profile updated successfully",
-        user: userWithoutPassword,
-      });
-    } catch (error) {
-      console.error("Error uploading to Cloudinary:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Error uploading profile picture",
-      });
     }
+
+    const updatedData: any = {
+      name,
+      email,
+      contact: Number(phone),
+      city,
+      country,
+      address,
+    };
+
+    // Only add profilePicture if we have a new image
+    if (imageURL) {
+      updatedData.profilePicture = imageURL;
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId, 
+      updatedData, 
+      { new: true }
+    ).select("-password");
+
+    return res.status(200).json({ 
+      success: true, 
+      user, 
+      message: "Profile updated successfully" 
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
+    return res.status(500).json({ 
+      message: "Internal server error" 
     });
   }
 };

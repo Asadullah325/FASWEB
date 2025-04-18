@@ -2,8 +2,28 @@ import Image from "@/assets/res.webp"
 import { Badge } from "../ui/badge"
 import { Timer } from "lucide-react"
 import AvailableManu from "./AvailableManu"
+import { useResturantStore } from "@/store/useResturantStore"
+import { useParams } from "react-router-dom"
+import { useEffect } from "react"
 
 const ResturantDetails = () => {
+
+    const params = useParams()
+    const { getSingleResturant, singleResturant } = useResturantStore()
+
+
+
+    useEffect(() => {
+        if (params.id) {
+            getSingleResturant(params.id)
+        }
+        console.log(params.id);
+
+        console.log(singleResturant);
+
+    }, [params.resturantId])
+
+
     return (
         <>
             <div className="max-w-7xl mx-2 md:mx-auto my-4">

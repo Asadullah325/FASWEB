@@ -34,7 +34,10 @@ type UserState = {
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
-  updateProfile: (data: UpdateProfileData) => Promise<void>;
+  updateProfile: (
+    data: UpdateProfileData,
+    formData?: FormData
+  ) => Promise<void>;
 };
 
 export const useUserStore = create<UserState>()(
@@ -193,16 +196,32 @@ export const useUserStore = create<UserState>()(
           toast.error(err.response?.data?.message || "Something went wrong");
         }
       },
-      updateProfile: async (data: UpdateProfileData) => {
+      updateProfile: async (data: UpdateProfileData, formData?: FormData) => {
         try {
-          set({ loading: true });
-          const response = await axios.post(
-            `${API_END_POINT}/profile/update`,
-            data,
-            {
-              headers: { "Content-Type": "application/json" },
-            }
-          );
+          let response;
+
+          if (formData) {
+            // If we have form data (includes file), send as multipart
+            response = await axios.put(
+              `${API_END_POINT}/profile/update`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+          } else {
+            // Otherwise send as JSON
+            response = await axios.put(
+              `${API_END_POINT}/profile/update`,
+              data,
+              {
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+          }
+
           if (response?.data?.success) {
             toast.success(response.data.message);
             set({
@@ -212,7 +231,6 @@ export const useUserStore = create<UserState>()(
             });
           }
         } catch (error: unknown) {
-          set({ loading: false });
           const err = error as { response?: { data?: { message?: string } } };
           toast.error(err.response?.data?.message || "Something went wrong");
         }

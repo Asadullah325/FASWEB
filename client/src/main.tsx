@@ -5,8 +5,8 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css' // Don't forget to import the styles
 
 createRoot(document.getElementById('root')!).render(
-    <>
-      <App />
-      <ToastContainer />
-    </>
+  <>
+    <App />
+    <ToastContainer position='bottom-right' />
+  </>
 )

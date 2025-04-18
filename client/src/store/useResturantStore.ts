@@ -14,6 +14,7 @@ export const useResturantStore = create<RestaurantState>()(
       resturant: null,
       searchedResturant: null,
       appliedFilter: [],
+      singleResturant: null,
       createResturant: async (formData: FormData) => {
         try {
           set({ loading: true });
@@ -95,7 +96,7 @@ export const useResturantStore = create<RestaurantState>()(
             set({
               loading: false,
               searchedResturant: { data: response.data.data },
-            });            
+            });
           }
         } catch (error: unknown) {
           set({ loading: false, searchedResturant: null });
@@ -139,8 +140,21 @@ export const useResturantStore = create<RestaurantState>()(
           return { appliedFilter: updatedFilter };
         });
       },
+
       resetAppliedFilter: () => {
         set({ appliedFilter: [] });
+      },
+
+      getSingleResturant: async (resturantId: string) => {
+        try {
+          const response = await axios.get(`${API_END_POINT}/${resturantId}`);
+          if (response.data.success) {
+            set({ singleResturant: response.data.resturant });
+          }
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { message?: string } } };
+          toast.error(err.response?.data?.message || "Something went wrong");
+        }
       },
     }),
     {

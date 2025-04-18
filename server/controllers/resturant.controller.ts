@@ -220,11 +220,6 @@ export const SearchResturant = async (req: Request, res: Response) => {
       .split(",")
       .filter((tag) => tag);
 
-    // Debugging logs for clarity
-    console.log("Selected Tags:", selectedTags);
-    console.log("Search Query:", searchQuery);
-    console.log("Search Text:", searchText);
-
     const query: any = {};
     const orConditions: any[] = [];
 
@@ -259,8 +254,6 @@ export const SearchResturant = async (req: Request, res: Response) => {
       query.$or = orConditions;
     }
 
-    console.log("Final MongoDB Query:", JSON.stringify(query, null, 2));
-
     // Perform the search using the constructed query
     const restaurants = await Restaurant.find(query);
 
@@ -280,9 +273,9 @@ export const SearchResturant = async (req: Request, res: Response) => {
 
 export const getSingleResturant = async (req: Request, res: Response) => {
   try {
-    const { resturantId } = req.params;
+    const { id } = req.params;
 
-    const resturant = await Restaurant.findById(resturantId).populate({
+    const resturant = await Restaurant.findById(id).populate({
       path: "menus",
       options: { createdAt: -1 },
     });

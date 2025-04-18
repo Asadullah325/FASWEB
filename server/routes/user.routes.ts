@@ -11,6 +11,7 @@ import {
 } from "../controllers/user.controller";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 import { catchAsync } from "../utils/catchAsync";
+import upload from "../middlewares/multer";
 
 const router = express.Router();
 
@@ -25,6 +26,6 @@ router.route("/forgot-password").post(catchAsync(forgetPassword));
 router.route("/reset-password/:token").post(catchAsync(resetPassword));
 router
   .route("/profile/update")
-  .put(catchAsync(isAuthenticated), catchAsync(updateProfile));
+  .put(catchAsync(isAuthenticated), upload.single("file"), catchAsync(updateProfile));
 
 export default router;

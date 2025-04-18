@@ -4,46 +4,88 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button"
+import { useUserStore } from "@/store/useUserStore"
 
+interface ProfileData {
+  name: string;
+  image: string; // Only string type for the image URL
+  phone: string | number;
+  email: string;
+  address: string;
+  city: string;
+  country: string;
+}
 
 const Profile = () => {
 
-  const [profileData, setProfileData] = useState({
-    name: "",
-    image: "",
-    phone: "",
-    email: "",
-    address: "",
-    city: "",
-    country: "",
+  const { user, updateProfile } = useUserStore()
+
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const [profileData, setProfileData] = useState<ProfileData>({
+    name: user?.name || "",
+    image: user?.profilePicture || "",
+    phone: user?.contact || "",
+    email: user?.email || "",
+    address: user?.address || "",
+    city: user?.city || "",
+    country: user?.country || "",
   })
   const imageRef = useRef<HTMLInputElement | null>(null)
   const [selectedProfile, setSelectedProfile] = useState<string>("")
-  const loading = false
 
   const fileChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const result = reader.result as string
-        setSelectedProfile(result)
-        setProfileData((prev) => ({ ...prev, image: result }))
-
-      }
-      reader.readAsDataURL(file)
+      setSelectedProfile(URL.createObjectURL(file)); // For preview only
+      setProfileData(prev => ({ ...prev })); // Don't store File in profileData
     }
-  }
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setProfileData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    console.log(profileData)
-  }
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true)
+      const formData = new FormData();
+      // Convert all values to strings before appending
+      formData.append("name", String(profileData.name));
+      formData.append("email", String(profileData.email));
+      formData.append("phone", String(profileData.phone)); // Convert number to string
+      formData.append("city", String(profileData.city));
+      formData.append("country", String(profileData.country));
+      formData.append("address", String(profileData.address));
+
+
+      // Handle file upload separately if a new file was selected
+      if (imageRef.current?.files?.[0]) {
+        formData.append("file", imageRef.current.files[0]);
+      }
+
+      // Create an object with all the data except the image
+      const profileDataWithoutImage = {
+        name: profileData.name,
+        email: profileData.email,
+        phone: profileData.phone,
+        city: profileData.city,
+        country: profileData.country,
+        address: profileData.address,
+      };
+
+      // Call updateProfile with both the form data and the regular data
+      await updateProfile(profileDataWithoutImage, formData);
+      setLoading(false)
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setLoading(false)
+    }
+  };
+
 
   return (
     <>
@@ -51,7 +93,7 @@ const Profile = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Avatar className="relative w-20 h-20 md:w-24 md:h-24">
-              <AvatarImage src={selectedProfile} />
+              <AvatarImage src={selectedProfile || profileData.image} />
               <AvatarFallback>
                 {profileData.name ? profileData.name.split(" ").map(n => n[0]).join("").toUpperCase() : "CN"}
               </AvatarFallback>
@@ -77,6 +119,7 @@ const Profile = () => {
                 type="email"
                 name="email"
                 id="email"
+                disabled
                 value={profileData.email}
                 onChange={handleChange}
                 placeholder="Email" className="w-full p-2 focus-visible:ring-transparent bg-transparent border-0 outline-0" />
@@ -129,6 +172,7 @@ const Profile = () => {
                 type="text"
                 name="phone"
                 id="phone"
+                disabled
                 value={profileData.phone}
                 onChange={handleChange}
                 placeholder="Phone" className="w-full p-2 focus-visible:ring-transparent bg-transparent border-0 outline-0" />

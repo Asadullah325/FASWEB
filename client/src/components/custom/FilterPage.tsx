@@ -9,7 +9,6 @@ export type FilterOption = {
 }
 
 const filterOptions: FilterOption[] = [
-  { id: 1, name: "All" },
   { id: 2, name: "Burger" },
   { id: 3, name: "Pizza" },
   { id: 4, name: "Sushi" },
@@ -22,6 +21,7 @@ const FilterPage = () => {
   const filterOptionsHandle = (value: string) => {
     setAppliedFilter(value);
   };
+  console.log(appliedFilter);
 
   return (
     <div className="flex flex-col gap-4 w-full md:w-72 py-4">

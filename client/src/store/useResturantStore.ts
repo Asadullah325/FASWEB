@@ -82,15 +82,20 @@ export const useResturantStore = create<RestaurantState>()(
           set({ loading: true });
 
           const params = new URLSearchParams();
-          params.set("searchQuery", searchQuery);
-          params.set("selectedTags", selectedTags.join(","));
+          if (searchQuery) params.set("searchQuery", searchQuery);
+          if (selectedTags.length > 0)
+            params.set("selectedTags", selectedTags.join(","));
 
-          // await new Promise((resolve) => setTimeout(resolve, 2000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
           const response = await axios.get(
             `${API_END_POINT}/search/${searchText}?${params.toString()}`
           );
+
           if (response.data.success) {
-            set({ loading: false, searchedResturant: response.data });
+            set({
+              loading: false,
+              searchedResturant: { data: response.data.data },
+            });
           }
         } catch (error: unknown) {
           set({ loading: false, searchedResturant: null });
@@ -135,8 +140,8 @@ export const useResturantStore = create<RestaurantState>()(
         });
       },
       resetAppliedFilter: () => {
-        set({ appliedFilter: [] })
-    },
+        set({ appliedFilter: [] });
+      },
     }),
     {
       name: "resturant",

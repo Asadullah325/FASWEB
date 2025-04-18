@@ -211,43 +211,60 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     });
   }
 };
+
 export const SearchResturant = async (req: Request, res: Response) => {
   try {
-    const searchText = req.params.searchText || "";
+    const searchText = req.params.searchTerm || "";
     const searchQuery = (req.query.searchQuery as string) || "";
     const selectedTags = ((req.query.selectedTags as string) || "")
       .split(",")
       .filter((tag) => tag);
-    const query: any = {};
 
+    const query: any = {};
+    const orConditions: any[] = [];
+
+    // Search by name, city, country from searchText
     if (searchText) {
-      query.$or = [
-        { restaurantName: { $regex: searchText, $options: "i" } },
+      orConditions.push(
+        { name: { $regex: searchQuery, $options: "i" } },
         { city: { $regex: searchText, $options: "i" } },
-        { country: { $regex: searchText, $options: "i" } },
-      ];
+        { country: { $regex: searchText, $options: "i" } }
+      );
     }
+
     // filter on the basis of searchQuery
     if (searchQuery) {
-      query.$or = [
-        { restaurantName: { $regex: searchQuery, $options: "i" } },
-        { tags: { $regex: searchQuery, $options: "i" } },
-      ];
-    }
-    // console.log(query);
-    // ["momos", "burger"]
-    if (selectedTags.length > 0) {
-      query.tags = { $in: selectedTags };
+      orConditions.push(
+        { name: { $regex: searchQuery, $options: "i" } },
+        { tags: { $regex: searchQuery, $options: "i" } }
+      );
     }
 
+    // Handle selectedTags filtering
+    if (selectedTags.length > 0) {
+      query.tags = {
+        $elemMatch: {
+          $in: selectedTags.map((tag) => new RegExp(tag, "i")), // Case-insensitive regex
+        },
+      };
+    }
+
+    // If any search conditions were added, combine them with OR
+    if (orConditions.length > 0) {
+      query.$or = orConditions;
+    }
+
+    // Perform the search using the constructed query
     const restaurants = await Restaurant.find(query);
+
+    // Return the search results
     return res.status(200).json({
       success: true,
       data: restaurants,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    console.error("SearchResturant Error:", error);
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });

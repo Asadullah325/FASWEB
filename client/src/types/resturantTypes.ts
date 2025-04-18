@@ -19,6 +19,8 @@ export type Resturant = {
 
 export type SearchedResturant = {
   data: Resturant[];
+  success?: boolean;
+  message?: string;
 };
 
 export type RestaurantState = {
@@ -31,9 +33,9 @@ export type RestaurantState = {
   updateResturant: (formData: FormData) => Promise<void>;
   searchResturant: (
     searchText: string,
-    searchQuery: string,
-    selectedTags: []
-  ) => Promise<void>;
+    query: string,
+    filters: string[]
+  ) => void;
   addMenuToResturant: (menu: MenuItem) => void;
   updateMenuToResturant: (menu: MenuItem) => void;
   setAppliedFilter: (value: string) => void;

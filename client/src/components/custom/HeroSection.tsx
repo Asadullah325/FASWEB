@@ -31,7 +31,7 @@ const HeroSection = () => {
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                             value={searchText}
                             onChange={(e) => setSearchText(e.target.value)}
-                            placeholder="Search Here"
+                            placeholder="Search restaurant by name, city & country"
                             className='w-full pl-10' />
                         <Search className="absolute left-2 top-2 text-gray-400" />
                         <Button onClick={handleSearch} className='cursor-pointer' >Search</Button>

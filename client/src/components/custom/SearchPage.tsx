@@ -18,18 +18,26 @@ const SearchPage = () => {
     const {
         loading,
         searchResturant,
+        setAppliedFilter,
         appliedFilter,
-        searchedResturant
+        searchedResturant,
     } = useResturantStore();
 
-    useEffect(() => {
-        searchResturant(params.searchText!, searchQuery, appliedFilter);
+    const searchResults = searchedResturant?.data ?? [];
 
+    // Debounce effect for searchQuery
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (params.searchText) {
+                searchResturant(params.searchText, searchQuery, appliedFilter);
+            }
+        }, 300);
+        return () => clearTimeout(timeout);
     }, [params.searchText, appliedFilter, searchQuery, searchResturant]);
 
     const handleSearch = () => {
         if (params.searchText) {
-            searchResturant(params.appliedFilter, searchQuery, appliedFilter || []);
+            searchResturant(params.searchText, searchQuery, appliedFilter);
         }
     };
 
@@ -46,7 +54,7 @@ const SearchPage = () => {
                                 type="text"
                                 name="search"
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search Here"
+                               placeholder="Search by restaurant & tags"
                                 className="w-full"
                             />
                             <Button className="cursor-pointer" onClick={handleSearch}>
@@ -54,21 +62,22 @@ const SearchPage = () => {
                             </Button>
                         </div>
                     </div>
+
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-2">
                             <h1 className="text-2xl font-bold">
-                                ({searchedResturant?.data?.length || 0}) Search Results Found
+                                ({searchResults.length}) Search Results Found
                             </h1>
                             <div className="flex flex-wrap gap-2">
-                                {appliedFilter?.map((selectedFilter: string, index: number) => (
+                                {appliedFilter.map((selectedFilter: string, index: number) => (
                                     <div key={index} className="relative flex items-center max-w-full gap-2">
                                         <Badge className="px-3 py-1 pr-6 whitespace-nowrap" variant="outline">
                                             {selectedFilter}
                                         </Badge>
-                                        <X className="absolute right-1 cursor-pointer h-3 w-3" onClick={() => {
-                                            appliedFilter.splice(index, 1);
-                                            searchResturant(params.searchText!, searchQuery, appliedFilter);
-                                        }} />
+                                        <X
+                                            className="absolute right-1 cursor-pointer h-3 w-3"
+                                            onClick={() => setAppliedFilter(selectedFilter)}
+                                        />
                                     </div>
                                 ))}
                             </div>
@@ -77,8 +86,8 @@ const SearchPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {loading ? (
                                 [...Array(6)].map((_, i) => <SkeletonCard key={i} />)
-                            ) : searchedResturant?.data?.length !== 0 ? (
-                                searchedResturant?.data.map((item: Resturant) => (
+                            ) : searchResults.length > 0 ? (
+                                searchResults.map((item: Resturant) => (
                                     <Card
                                         key={item._id}
                                         className="flex flex-col gap-2 p-0 hover:shadow-2xl transition-shadow duration-300"
@@ -99,7 +108,7 @@ const SearchPage = () => {
                                                     <span className="text-sm font-bold">Location: {item.country}</span>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {item.tags.map((tag: string, index: number) => (
+                                                    {item.tags?.map((tag: string, index: number) => (
                                                         <Badge key={index} className="px-3 py-1 whitespace-nowrap">
                                                             {tag}
                                                         </Badge>
@@ -118,7 +127,7 @@ const SearchPage = () => {
                                     </Card>
                                 ))
                             ) : (
-                                <NoResultFound searchText={params.searchText || ""} />
+                                <NoResultFound />
                             )}
                         </div>
                     </div>
@@ -157,11 +166,10 @@ const SkeletonCard = () => (
     </Card>
 );
 
-const NoResultFound = ({ searchText }: { searchText: string }) => (
+const NoResultFound = () => (
     <div className="flex flex-col items-center justify-center h-full py-10 text-center col-span-full">
         <h1 className="text-3xl font-bold">No Results Found</h1>
-        <p className="mt-2 text-lg">We couldn't find any results for "{searchText}".</p>
         <p className="mt-2 text-lg">Try searching with different keywords.</p>
-        <Link to="/" className="mt-4 text-blue-500 hover:underline">Go back to Home</Link>
+        <Link to="/" className="mt-4 p-2 bg-black text-white font-bold rounded-lg">Go back to Home</Link>
     </div>
 );

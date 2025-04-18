@@ -1,48 +1,47 @@
-import { MapPin, ShoppingCart } from "lucide-react"
+import { PackageCheck, ShoppingCart } from "lucide-react"
 import { AspectRatio } from "../ui/aspect-ratio"
 import { Card, CardContent, CardFooter } from "../ui/card"
-import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
-import Image from "@/assets/images.jpeg"
 import { Skeleton } from "../ui/skeleton"
+import { useResturantStore } from "@/store/useResturantStore"
+import { MenuItem } from "@/types/resturantTypes"
+import { useCartStore } from "@/store/useCartStore"
+import { useNavigate } from "react-router-dom"
 
 const AvailableManu = () => {
-  return (
+
+  const { loading: isLoading, singleResturant } = useResturantStore()
+  const { addToCart } = useCartStore()
+  const navigate = useNavigate()
+
+  return isLoading ? <AvailableManuSkeleton /> : (
     <div className="md:p-3">
       <h1 className="text-xl md:text-2xl font-bold">Available Manu</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {
-          [1, 2, 3, 4, 5, 6].map((item: number) => (
-            <Card key={item} className="flex flex-col gap-2 p-0 hover:shadow-2xl transition-shadow duration-300">
+          singleResturant?.menus.map((item: MenuItem) => (
+            <Card key={item._id} className="flex flex-col gap-2 p-0 hover:shadow-2xl transition-shadow duration-300">
               <div className="relative">
                 <AspectRatio ratio={16 / 9} className="rounded-tl-lg rounded-tr-lg overflow-hidden">
-                  <img className="w-full h-full object-cover" src={Image} alt="" />
+                  <img className="w-full h-full object-cover" src={item.image} alt="" />
                 </AspectRatio>
                 <span className="absolute top-2 left-2 bg-red-500 font-bold text-primary-foreground text-xs px-2 py-0.5 rounded">Featured</span>
               </div>
               <CardContent>
                 <div className="flex flex-col gap-2 py-2">
-                  <h2 className="text-lg font-bold">Delicious Biryani</h2>
+                  <h2 className="text-lg font-bold">{item.name}</h2>
                   <div className="flex items-center">
-                    <MapPin className="h-4 w-4  inline-block mr-1" />
-                    <span className="text-sm font-bold">Location: New York</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {
-                      ["Biryani", "Noodles", "Rice"].map((item: string, index: number) => (
-                        <div key={index} className="relative flex items-center max-w-full gap-2">
-                          <Badge className="px-3 py-1 whitespace-nowrap">
-                            {item}
-                          </Badge>
-                        </div>
-                      ))
-                    }
+                    <PackageCheck className="h-4 w-4  inline-block mr-1" />
+                    <span className="text-sm font-bold">Description: {item.description}</span>
                   </div>
                   <div className="flex items-center">
-                    <span className="text-sm font-bold">Price: $20</span>
+                    <span className="text-sm font-bold">Price: ${item.price}</span>
                   </div>
                   <CardFooter className="p-0 border-t border-t-slate-500">
-                    <Button className="w-full cursor-pointer"><ShoppingCart className="mr-2 h-4 w-4" /> Add To Cart</Button>
+                    <Button onClick={() => {
+                      addToCart(item)
+                      navigate("/cart")
+                    }} className="w-full cursor-pointer"><ShoppingCart className="mr-2 h-4 w-4" /> Add To Cart</Button>
                   </CardFooter>
                 </div>
               </CardContent>

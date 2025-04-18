@@ -3,16 +3,18 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
+import { useUserStore } from "@/store/useUserStore"
 
 const CheckOutPopUp = ({ open, setOpen }: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) => {
 
+    const { user } = useUserStore()
     const [data, setData] = useState({
-        name: "",
-        email: "",
-        address: "",
-        city: "",
-        contact: "",
-        country: "",
+        name: user?.name || "",
+        email: user?.email || "",
+        address: user?.address || "",
+        city: user?.city || "",
+        contact: user?.contact || "",
+        country: user?.country || "",
     })
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +51,7 @@ const CheckOutPopUp = ({ open, setOpen }: { open: boolean, setOpen: Dispatch<Set
                                     type="text"
                                     id="name"
                                     name="name"
+                                    disabled
                                     value={data.name}
                                     onChange={handleChange}
                                     placeholder="John Doe"
@@ -60,6 +63,7 @@ const CheckOutPopUp = ({ open, setOpen }: { open: boolean, setOpen: Dispatch<Set
                                     type="email"
                                     id="email"
                                     name="email"
+                                    disabled
                                     value={data.email}
                                     onChange={handleChange}
                                     placeholder="oHn4o@example.com"
@@ -71,6 +75,7 @@ const CheckOutPopUp = ({ open, setOpen }: { open: boolean, setOpen: Dispatch<Set
                                     type="number"
                                     id="contact"
                                     name="contact"
+                                    disabled
                                     className="no-spinner"
                                     value={data.contact}
                                     onChange={handleChange}

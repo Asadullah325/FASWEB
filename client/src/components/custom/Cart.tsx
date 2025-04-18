@@ -2,15 +2,19 @@ import { AvatarImage } from "@radix-ui/react-avatar"
 import { Avatar, AvatarFallback } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "../ui/table"
-import Image from "@/assets/images.jpeg"
 import CheckOutPopUp from "./CheckOutPopUp"
 import { useState } from "react"
+import { useCartStore } from "@/store/useCartStore"
+import { CartItem } from "@/types/cartTypes"
 
 const Cart = () => {
 
-    const [open , setOpen] = useState<boolean>(false)
+    const [open, setOpen] = useState<boolean>(false)
+    const { cart, incrementQuantity, decrementQuantity, removeFromTheCart } = useCartStore()
 
-   
+    const totalAmount = cart.reduce((acc, item) => {
+        return acc + item.price * item.quantity
+    }, 0)
 
     return (
         <>
@@ -31,39 +35,63 @@ const Cart = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell className="w-1/6">
-                                <Avatar className="w-10 h-10">
-                                    <AvatarImage src={Image} alt="Product Image" />
-                                    <AvatarFallback>CN</AvatarFallback>
-                                </Avatar>
-                            </TableCell>
-                            <TableCell>Product A</TableCell>
-                            <TableCell>$10.00</TableCell>
-                            <TableCell>
-                                <div className="flex items-center space-x-2">
-                                    <Button  className="cursor-pointer rounded-full" size={"sm"}>-</Button>
-                                    <span className="font-semibold">1</span>
-                                    <Button  className="cursor-pointer rounded-full" size={"sm"}>+</Button>
-                                </div>
-                            </TableCell>
-                            <TableCell>$10.00</TableCell>
-                            <TableCell className="text-right">
-                                <Button variant={"destructive"} size={"sm"} className="cursor-pointer">Remove</Button>
-                            </TableCell>
-                        </TableRow>
+                        {
+                            cart.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="text-center">Your cart is empty</TableCell>
+                                </TableRow>
+                            ) : (
+                                cart.map((item: CartItem) => (
+                                    <TableRow key={item._id}>
+                                        <TableCell className="w-1/6">
+                                            <Avatar className="w-10 h-10">
+                                                <AvatarImage src={item.image} />
+                                                <AvatarFallback>{item.name ? item.name.split(" ").map(n => n[0]).join("").toUpperCase() : "CN"}</AvatarFallback>
+                                            </Avatar>
+                                        </TableCell>
+                                        <TableCell>{item.name}</TableCell>
+                                        <TableCell>{item.price}</TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center space-x-2">
+                                                <Button
+                                                    onClick={() => decrementQuantity(item._id)} className="cursor-pointer rounded-full"
+                                                    size={"sm"}
+                                                >-</Button>
+                                                <span className="font-semibold">{item.quantity}</span>
+                                                <Button
+                                                    onClick={() => incrementQuantity(item._id)} className="cursor-pointer rounded-full"
+                                                    size={"sm"}
+                                                >+</Button>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{item.price * item.quantity}</TableCell>
+                                        <TableCell className="text-right">
+                                            <Button
+                                                onClick={() => removeFromTheCart(item._id)}
+                                                variant={"destructive"}
+                                                size={"sm"}
+                                                className="cursor-pointer"
+                                            >Remove</Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )
+                        }
+
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={4}  className="text-left text-xl md:text-2xl font-semibold">Subtotal:</TableCell>
-                            <TableCell colSpan={2}  className="font-semibold text-xl md:text-2xl text-right">$10.00</TableCell>
+                            <TableCell colSpan={4} className="text-left text-xl md:text-2xl font-semibold">Subtotal:</TableCell>
+                            <TableCell colSpan={2} className="font-semibold text-xl md:text-2xl text-right">
+                                {totalAmount}
+                            </TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>
                 <div className="flex justify-end mt-4">
                     <Button onClick={() => setOpen(true)} className="cursor-pointer">Proceed to Checkout</Button>
                 </div>
-                <CheckOutPopUp open={open} setOpen={setOpen}/>
+                <CheckOutPopUp open={open} setOpen={setOpen} />
             </div>
         </>
     )

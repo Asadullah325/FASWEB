@@ -7,10 +7,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
 import { Separator } from "../ui/separator"
 import { useUserStore } from "@/store/useUserStore"
+import { useCartStore } from "@/store/useCartStore"
 
 const Navbar = () => {
 
   const { user, loading, logout } = useUserStore()
+  const { cart } = useCartStore()
 
   return (
     <>
@@ -72,11 +74,19 @@ const Navbar = () => {
             </DropdownMenu>
             <Link to="/cart" className="relative text-gray-700 font-bold hover:text-gray-900">
               <ShoppingCart className="h-6 w-6" />
-              <Button size={"icon"} className="absolute -top-2 -right-2 w-4 h-4 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-full">5</Button>
+              {
+                cart.length > 0 && (
+                  <Button size={"icon"} className="absolute -top-2 -right-2 w-4 h-4 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-full">
+                    {cart.length}
+                  </Button>
+                )
+              }
             </Link>
             <Avatar>
-              <AvatarImage className="cursor-pointer" src={user?.profilePicture || ""} />
-              <AvatarFallback className="cursor-pointer">CN</AvatarFallback>
+              <AvatarImage className="cursor-pointer" src={user?.profilePicture} />
+              <AvatarFallback className="cursor-pointer">
+                {user?.name ? user?.name.split(" ").map(n => n[0]).join("").toUpperCase() : "CN"}
+              </AvatarFallback>
             </Avatar>
             {
               loading ? (
@@ -104,7 +114,8 @@ const Navbar = () => {
 export default Navbar
 
 const NavbarMobile = ({ admin }: { admin: boolean }) => {
-  const { loading, logout } = useUserStore()
+  const { loading, logout, user } = useUserStore()
+  const { cart } = useCartStore()
 
   return (
     <>
@@ -150,7 +161,7 @@ const NavbarMobile = ({ admin }: { admin: boolean }) => {
             <Link to="/cart" className="relative flex items-center gap-2 text-gray-700 font-bold hover:text-gray-900">
               <ShoppingCart className="h-6 w-6" />
               Cart
-              <Button size={"icon"} className="absolute top-0 -right-2 w-6 h-6 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-full">5</Button>
+              <Button size={"icon"} className="absolute top-0 -right-2 w-6 h-6 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-full">{cart.length}</Button>
             </Link>
             {
               admin && (
@@ -177,10 +188,12 @@ const NavbarMobile = ({ admin }: { admin: boolean }) => {
           <SheetFooter>
             <div className="flex items-center">
               <Avatar>
-                <AvatarImage className="cursor-pointer" src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740" />
-                <AvatarFallback className="cursor-pointer">CN</AvatarFallback>
+                <AvatarImage className="cursor-pointer" src={user?.profilePicture} />
+                <AvatarFallback className="cursor-pointer">
+                  {user?.name ? user?.name.split(" ").map(n => n[0]).join("").toUpperCase() : "CN"}
+                </AvatarFallback>
               </Avatar>
-              <h2 className="ml-2 font-bold">User Name</h2>
+              <h2 className="ml-2 font-bold">{user?.name}</h2>
             </div>
             {
               loading ? (

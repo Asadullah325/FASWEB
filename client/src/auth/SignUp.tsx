@@ -44,9 +44,9 @@ const SignUp = () => {
       return
     }
 
+    navigate("/verify-email")
     await signup(data)
 
-    navigate("/verify-email")
     setErrors({})
   }
 

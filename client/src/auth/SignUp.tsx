@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Eye, EyeOff, Loader, Mail, PhoneIcon, User2 } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { ChangeEvent, FormEvent, useState } from "react"
 import { UserSignUp, userSignUpSchema } from "@/schemas/userSchema"
 import { useUserStore } from "@/store/useUserStore"
@@ -13,7 +13,6 @@ const SignUp = () => {
   const [passwordVisible, setPasswordVisible] = useState(false)
 
   const { signup, loading } = useUserStore()
-  const navigate = useNavigate()
 
   const [data, setData] = useState<UserSignUp>({
     email: "",
@@ -45,8 +44,6 @@ const SignUp = () => {
     }
 
     await signup(data)
-
-    navigate("/verify-email")
     setErrors({})
   }
 

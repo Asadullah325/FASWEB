@@ -63,6 +63,7 @@ export const useUserStore = create<UserState>()(
               token: response.data.token,
               isAuthenticated: true,
             });
+            window.location.href = "/verfiy-email";
           }
         } catch (error: unknown) {
           set({ loading: false });

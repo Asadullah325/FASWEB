@@ -18,7 +18,6 @@ const EditMenu = (
 ) => {
 
     const [data, setData] = useState<Menu>({
-        menuId: "",
         name: "",
         description: "",
         price: 0,
@@ -60,7 +59,7 @@ const EditMenu = (
             if (data.image) {
                 formData.append("image", data.image);
             }
-            await editMenu(selectedMenu?.menuId || "", formData);
+            await editMenu(selectedMenu?.name || "", formData);
             setEditOpen(false)
         } catch (error) {
             console.error(error);
@@ -70,7 +69,6 @@ const EditMenu = (
     useEffect(() => {
         if (selectedMenu) {
             setData({
-                menuId: selectedMenu.menuId,
                 name: selectedMenu.name,
                 description: selectedMenu.description,
                 price: selectedMenu.price,

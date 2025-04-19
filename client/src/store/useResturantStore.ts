@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-const API_END_POINT = "http://localhost:3000/api/v1/resturant";
+const API_END_POINT = `${import.meta.env.VITE_API_END_POINT}/resturant`;
 axios.defaults.withCredentials = true;
 
 export const useResturantStore = create<RestaurantState>()(

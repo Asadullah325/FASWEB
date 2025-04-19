@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useResturantStore } from "./useResturantStore";
 
-const API_END_POINT = "http://localhost:3000/api/v1/menu";
+const API_END_POINT = `${import.meta.env.VITE_API_END_POINT}/menu`;
 axios.defaults.withCredentials = true;
 
 type MenuState = {

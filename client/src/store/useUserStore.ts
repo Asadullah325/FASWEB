@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 const API_END_POINT = `${import.meta.env.VITE_API_END_POINT}/user`;
 axios.defaults.withCredentials = true;
 
-
 type User = {
   name: string;
   email: string;
@@ -63,7 +62,6 @@ export const useUserStore = create<UserState>()(
               token: response.data.token,
               isAuthenticated: true,
             });
-            window.location.href = "/verfiy-email";
           }
         } catch (error: unknown) {
           set({ loading: false });

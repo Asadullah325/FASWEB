@@ -89,7 +89,11 @@ const Cart = () => {
                     </TableFooter>
                 </Table>
                 <div className="flex justify-end mt-4">
-                    <Button onClick={() => setOpen(true)} className="cursor-pointer">Proceed to Checkout</Button>
+                    {
+                        cart.length > 0 && (
+                            <Button onClick={() => setOpen(true)} className="cursor-pointer">Checkout</Button>
+                        )
+                    }
                 </div>
                 <CheckOutPopUp open={open} setOpen={setOpen} />
             </div>

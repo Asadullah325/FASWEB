@@ -19,20 +19,20 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center p-3 shadow-md bg-white">
+      <div className="flex justify-between items-center p-3 shadow-md bg-white dark:bg-gray-800">
         <Link to={"/"} className="flex items-center space-x-2">
           <img src="/Logo.webp" alt="Logo" className="h-10 w-10 rounded-full" />
           <h1 className="text-2xl font-bold">FESWEB </h1>
         </Link>
         <div className="hidden md:flex space-x-4 items-center pr-10">
           <div className="flex space-x-4 items-center">
-            <Link to="/" className="text-gray-700 font-bold hover:text-gray-900">
+            <Link to="/" className="text-gray-700 font-bold hover:text-gray-900 dark:text-gray-200 hover:dark:text-white">
               Home
             </Link>
-            <Link to="/profile" className="text-gray-700 font-bold hover:text-gray-900">
+            <Link to="/profile" className="text-gray-700 font-bold hover:text-gray-900 dark:text-gray-200 hover:dark:text-white">
               Profile
             </Link>
-            <Link to="/order/status" className="text-gray-700 font-bold hover:text-gray-900">
+            <Link to="/order/status" className="text-gray-700 font-bold hover:text-gray-900 dark:text-gray-200 hover:dark:text-white">
               My Orders
             </Link>
             {
@@ -41,13 +41,13 @@ const Navbar = () => {
                   <MenubarMenu>
                     <MenubarTrigger className="cursor-pointer">Dashboard</MenubarTrigger>
                     <MenubarContent>
-                      <Link to="/admin/resturant" className="text-gray-700 font-bold cursor-pointer hover:text-gray-900">
+                      <Link to="/admin/resturant" className="text-gray-700 font-bold cursor-pointer hover:text-gray-900 dark:text-gray-200 hover:dark:text-white">
                         <MenubarItem className="cursor-pointer">Resturant</MenubarItem>
                       </Link>
-                      <Link to="/admin/menu" className="text-gray-700 cursor-pointer font-bold hover:text-gray-900">
+                      <Link to="/admin/menu" className="text-gray-700 cursor-pointer font-bold hover:text-gray-900 dark:text-gray-200 hover:dark:text-white">
                         <MenubarItem className="cursor-pointer">Menu</MenubarItem>
                       </Link>
-                      <Link to="/admin/orders" className="text-gray-700 font-bold cursor-pointer hover:text-gray-900">
+                      <Link to="/admin/orders" className="text-gray-700 font-bold cursor-pointer hover:text-gray-900 dark:text-gray-200 hover:dark:text-white">
                         <MenubarItem className="cursor-pointer"> Resturant Orders</MenubarItem>
                       </Link>
                     </MenubarContent>
@@ -75,7 +75,7 @@ const Navbar = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Link to="/cart" className="relative text-gray-700 font-bold hover:text-gray-900">
+            <Link to="/cart" className="relative text-gray-700 font-bold hover:text-gray-900 dark:text-gray-200 hover:dark:text-white">
               <ShoppingCart className="h-6 w-6" />
               {
                 cart.length > 0 && (

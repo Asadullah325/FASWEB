@@ -32,7 +32,7 @@ const ResturantDetails = () => {
                     </div>
                     <div className="flex flex-col md:flex-row justify-between">
                         <div className="my-2 flex flex-col gap-2">
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{singleResturant?.name}</h1>
+                            <h1 className="text-2xl md:text-3xl font-bold">{singleResturant?.name}</h1>
                             <div className="flex flex-wrap gap-2">
                                 {
                                     singleResturant?.tags.map((item: string, index: number) => (
@@ -44,14 +44,14 @@ const ResturantDetails = () => {
                                     ))
                                 }
                             </div>
-                            <p className="text-gray-600">{singleResturant?.country}</p>
-                            <p className="text-gray-600">{singleResturant?.city}</p>
+                            <p className="">{singleResturant?.country}</p>
+                            <p className="">{singleResturant?.city}</p>
                             <div className="flex flex-col md:flex-row gap-2">
                                 <div className="flex items-center gap-2">
-                                    <Timer className="text-gray-600" size={20} />
-                                    <h1 className="text-gray-600 font-semibold">
+                                    <Timer className="" size={20} />
+                                    <h1 className=" font-semibold">
                                         Delivary Time
-                                        <span className="text-gray-600"> {singleResturant?.delivaryTime} min</span>
+                                        <span className=""> {singleResturant?.delivaryTime} min</span>
                                     </h1>
                                 </div>
                             </div>

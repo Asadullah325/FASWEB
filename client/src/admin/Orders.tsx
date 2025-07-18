@@ -25,11 +25,11 @@ const Orders = () => {
                             <div key={order._id} className="flex flex-col md:flex-row sm:items-center gap-4 justify-between shadow-lg rounded-md p-4 mt-2">
                                 <div className="flex-1 space-y-4 md:space-y-2 flex flex-col">
                                     <h1 className="text-lg font-bold">{order.delivaryDetails.name}</h1>
-                                    <p className="font-semibold text-sm text-gray-500">
+                                    <p className="font-semibold text-sm ">
                                         <span>Address: </span>
                                         {order.delivaryDetails.address}
                                     </p>
-                                    <p className="font-semibold text-sm text-gray-500">
+                                    <p className="font-semibold text-sm">
                                         <span>Total Amount: </span>
                                         {order.totalPrice}
                                     </p>

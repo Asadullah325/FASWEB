@@ -43,11 +43,11 @@ const Login = () => {
 
     return (
         <>
-            <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-                <form className="bg-emerald-100 shadow-md rounded px-8 pt-6 pb-8 w-90 md:w-100" >
+            <div className="flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-gray-800">
+                <form className="bg-emerald-100 shadow-md rounded px-8 pt-6 pb-8 w-90 md:w-100 dark:bg-gray-900" >
                     <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
                     <div className="mb-4 relative">
-                        <Label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
+                        <Label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-100">
                             Email
                         </Label>
                         <Input
@@ -65,7 +65,7 @@ const Login = () => {
                         }
                     </div>
                     <div className="mb-4 relative" >
-                        <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+                        <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-100">
                             Password
                         </Label>
                         <Input
@@ -117,7 +117,7 @@ const Login = () => {
 
                     <Separator className="my-4 bg-emerald-400" orientation="horizontal" />
                     <div className="flex items-center justify-center">
-                        <p className="text-sm text-gray-600">Don't have an account? <Link to="/signup" className="text-emerald-500 hover:text-emerald-700 font-bold">Sign Up</Link></p>
+                        <p className="text-sm text-gray-600 dark:text-gray-200">Don't have an account? <Link to="/signup" className="text-emerald-500 hover:text-emerald-700 font-bold">Sign Up</Link></p>
                     </div>
                 </form>
             </div>

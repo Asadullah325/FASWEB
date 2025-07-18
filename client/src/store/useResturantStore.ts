@@ -32,6 +32,7 @@ export const useResturantStore = create<RestaurantState>()(
           if (response.data.success) {
             toast.success(response.data.message);
             set({ loading: false });
+            window.location.reload();
           }
         } catch (error: unknown) {
           set({ loading: false });
@@ -68,6 +69,7 @@ export const useResturantStore = create<RestaurantState>()(
           if (response.data.success) {
             toast.success(response.data.message);
             set({ loading: false, resturant: response.data.resturant });
+            window.location.reload();
           }
         } catch (error: unknown) {
           set({ loading: false });
